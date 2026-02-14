@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Python SDK for the Credere credit simulation API"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "MIT"
+license = "Apache-2.0"
 authors = [
     { name = "math-s", email = "matheus.andrade1996@gmail.com" },
 ]
