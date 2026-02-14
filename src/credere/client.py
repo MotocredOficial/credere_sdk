@@ -6,6 +6,7 @@ import httpx
 
 from credere.auth import APIKeyAuth
 from credere.resources.leads import AsyncLeads, Leads
+from credere.resources.proposals import AsyncProposals, Proposals
 from credere.resources.simulations import AsyncSimulations, Simulations
 
 _DEFAULT_BASE_URL = "https://api.credere.com"
@@ -30,6 +31,7 @@ class CredereClient:
             timeout=timeout,
         )
         self.leads = Leads(self._http, store_id=store_id)
+        self.proposals = Proposals(self._http, store_id=store_id)
         self.simulations = Simulations(self._http, store_id=store_id)
 
     def close(self) -> None:
@@ -60,6 +62,7 @@ class AsyncCredereClient:
             timeout=timeout,
         )
         self.leads = AsyncLeads(self._http, store_id=store_id)
+        self.proposals = AsyncProposals(self._http, store_id=store_id)
         self.simulations = AsyncSimulations(self._http, store_id=store_id)
 
     async def close(self) -> None:
