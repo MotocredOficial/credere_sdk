@@ -17,11 +17,20 @@ from credere.models.leads import (
     LeadCreateRequest,
     LeadRequiredFields,
 )
+from credere.models.simulations import (
+    Bank,
+    Simulation,
+    SimulationCondition,
+    SimulationConditionRequest,
+    SimulationCreateRequest,
+    SimulationVehicleRequest,
+)
 
 __all__ = [
     "Address",
     "AsyncCredereClient",
     "AuthenticationError",
+    "Bank",
     "CredereAPIError",
     "CredereClient",
     "CredereConnectionError",
@@ -33,4 +42,9 @@ __all__ = [
     "LeadCreateRequest",
     "LeadRequiredFields",
     "NotFoundError",
+    "Simulation",
+    "SimulationCondition",
+    "SimulationConditionRequest",
+    "SimulationCreateRequest",
+    "SimulationVehicleRequest",
 ]
