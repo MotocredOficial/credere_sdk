@@ -17,6 +17,14 @@ from credere.models.leads import (
     LeadCreateRequest,
     LeadRequiredFields,
 )
+from credere.models.proposals import (
+    Proposal,
+    ProposalCondition,
+    ProposalConditionRequest,
+    ProposalCreateRequest,
+    ProposalVehicle,
+    ProposalVehicleRequest,
+)
 from credere.models.simulations import (
     Bank,
     Simulation,
@@ -42,6 +50,12 @@ __all__ = [
     "LeadCreateRequest",
     "LeadRequiredFields",
     "NotFoundError",
+    "Proposal",
+    "ProposalCondition",
+    "ProposalConditionRequest",
+    "ProposalCreateRequest",
+    "ProposalVehicle",
+    "ProposalVehicleRequest",
     "Simulation",
     "SimulationCondition",
     "SimulationConditionRequest",
