@@ -18,6 +18,7 @@ from credere.models.leads import (
     LeadCreateRequest,
     LeadRequiredFields,
 )
+from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
 from credere.models.proposal_attempts import (
     ProposalAttempt,
     ProposalAttemptCreateRequest,
@@ -69,6 +70,8 @@ __all__ = [
     "LeadCreateRequest",
     "LeadRequiredFields",
     "NotFoundError",
+    "PlusReturnRule",
+    "PlusReturnRuleCreateRequest",
     "Proposal",
     "ProposalAttempt",
     "ProposalAttemptCreateRequest",
