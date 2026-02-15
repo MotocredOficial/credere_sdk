@@ -33,6 +33,7 @@ from credere.models.simulations import (
     SimulationCreateRequest,
     SimulationVehicleRequest,
 )
+from credere.models.stores import Store, StoreCreateRequest
 from credere.models.vehicle_models import (
     VehicleBrand,
     VehicleFuel,
@@ -69,6 +70,8 @@ __all__ = [
     "SimulationConditionRequest",
     "SimulationCreateRequest",
     "SimulationVehicleRequest",
+    "Store",
+    "StoreCreateRequest",
     "VehicleBrand",
     "VehicleFuel",
     "VehicleModel",
