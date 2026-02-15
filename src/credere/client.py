@@ -9,6 +9,7 @@ from credere.resources.leads import AsyncLeads, Leads
 from credere.resources.proposal_attempts import AsyncProposalAttempts, ProposalAttempts
 from credere.resources.proposals import AsyncProposals, Proposals
 from credere.resources.simulations import AsyncSimulations, Simulations
+from credere.resources.stock import AsyncStock, Stock
 from credere.resources.stores import AsyncStores, Stores
 from credere.resources.users import AsyncUsers, Users
 from credere.resources.utilities import AsyncUtilities, Utilities
@@ -38,6 +39,7 @@ class CredereClient:
         self.leads = Leads(self._http, store_id=store_id)
         self.proposals = Proposals(self._http, store_id=store_id)
         self.simulations = Simulations(self._http, store_id=store_id)
+        self.stock = Stock(self._http, store_id=store_id)
         self.utilities = Utilities(self._http, store_id=store_id)
         self.vehicle_models = VehicleModels(self._http, store_id=store_id)
         self.proposal_attempts = ProposalAttempts(self._http, store_id=store_id)
@@ -74,6 +76,7 @@ class AsyncCredereClient:
         self.leads = AsyncLeads(self._http, store_id=store_id)
         self.proposals = AsyncProposals(self._http, store_id=store_id)
         self.simulations = AsyncSimulations(self._http, store_id=store_id)
+        self.stock = AsyncStock(self._http, store_id=store_id)
         self.utilities = AsyncUtilities(self._http, store_id=store_id)
         self.vehicle_models = AsyncVehicleModels(self._http, store_id=store_id)
         self.proposal_attempts = AsyncProposalAttempts(self._http, store_id=store_id)
