@@ -10,6 +10,12 @@ from credere.exceptions import (
     NotFoundError,
 )
 from credere.models.bank_credentials import IntegratedBank
+from credere.models.customers import (
+    Customer,
+    CustomerAddress,
+    CustomerAddressRequest,
+    CustomerCreateRequest,
+)
 from credere.models.leads import (
     Address,
     DomainValue,
@@ -62,6 +68,10 @@ __all__ = [
     "CredereConnectionError",
     "CredereError",
     "CredereTimeoutError",
+    "Customer",
+    "CustomerAddress",
+    "CustomerAddressRequest",
+    "CustomerCreateRequest",
     "Domain",
     "DomainValue",
     "IntegratedBank",

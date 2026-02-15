@@ -1,6 +1,7 @@
 """Resource classes for the Credere SDK."""
 
 from credere.resources.bank_credentials import AsyncBankCredentials, BankCredentials
+from credere.resources.customers import AsyncCustomers, Customers
 from credere.resources.leads import AsyncLeads, Leads
 from credere.resources.plus_returns import AsyncPlusReturns, PlusReturns
 from credere.resources.proposal_attempts import AsyncProposalAttempts, ProposalAttempts
@@ -14,6 +15,7 @@ from credere.resources.vehicle_models import AsyncVehicleModels, VehicleModels
 
 __all__ = [
     "AsyncBankCredentials",
+    "AsyncCustomers",
     "AsyncLeads",
     "AsyncPlusReturns",
     "AsyncProposalAttempts",
@@ -25,6 +27,7 @@ __all__ = [
     "AsyncUtilities",
     "AsyncVehicleModels",
     "BankCredentials",
+    "Customers",
     "Leads",
     "PlusReturns",
     "ProposalAttempts",
