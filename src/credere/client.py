@@ -7,6 +7,7 @@ import httpx
 from credere.auth import APIKeyAuth
 from credere.resources.bank_credentials import AsyncBankCredentials, BankCredentials
 from credere.resources.leads import AsyncLeads, Leads
+from credere.resources.plus_returns import AsyncPlusReturns, PlusReturns
 from credere.resources.proposal_attempts import AsyncProposalAttempts, ProposalAttempts
 from credere.resources.proposals import AsyncProposals, Proposals
 from credere.resources.simulations import AsyncSimulations, Simulations
@@ -41,6 +42,7 @@ class CredereClient:
         self.proposals = Proposals(self._http, store_id=store_id)
         self.simulations = Simulations(self._http, store_id=store_id)
         self.bank_credentials = BankCredentials(self._http, store_id=store_id)
+        self.plus_returns = PlusReturns(self._http, store_id=store_id)
         self.stock = Stock(self._http, store_id=store_id)
         self.utilities = Utilities(self._http, store_id=store_id)
         self.vehicle_models = VehicleModels(self._http, store_id=store_id)
@@ -79,6 +81,7 @@ class AsyncCredereClient:
         self.proposals = AsyncProposals(self._http, store_id=store_id)
         self.simulations = AsyncSimulations(self._http, store_id=store_id)
         self.bank_credentials = AsyncBankCredentials(self._http, store_id=store_id)
+        self.plus_returns = AsyncPlusReturns(self._http, store_id=store_id)
         self.stock = AsyncStock(self._http, store_id=store_id)
         self.utilities = AsyncUtilities(self._http, store_id=store_id)
         self.vehicle_models = AsyncVehicleModels(self._http, store_id=store_id)
