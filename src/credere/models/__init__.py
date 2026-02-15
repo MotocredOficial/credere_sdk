@@ -16,6 +16,14 @@ from credere.models.simulations import (
     SimulationCreateRequest,
     SimulationVehicleRequest,
 )
+from credere.models.vehicle_models import (
+    VehicleBrand,
+    VehicleFuel,
+    VehicleModel,
+    VehiclePrice,
+    VehiclePriceStore,
+    VehicleType,
+)
 
 __all__ = [
     "Address",
@@ -30,4 +38,10 @@ __all__ = [
     "SimulationConditionRequest",
     "SimulationCreateRequest",
     "SimulationVehicleRequest",
+    "VehicleBrand",
+    "VehicleFuel",
+    "VehicleModel",
+    "VehiclePrice",
+    "VehiclePriceStore",
+    "VehicleType",
 ]
