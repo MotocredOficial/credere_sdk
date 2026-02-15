@@ -39,6 +39,7 @@ from credere.models.simulations import (
 )
 from credere.models.stores import Store, StoreCreateRequest
 from credere.models.users import User, UserAccount, UserRole
+from credere.models.utilities import Domain
 from credere.models.vehicle_models import (
     VehicleBrand,
     VehicleFuel,
@@ -58,6 +59,7 @@ __all__ = [
     "CredereConnectionError",
     "CredereError",
     "CredereTimeoutError",
+    "Domain",
     "DomainValue",
     "Lead",
     "LeadAddress",
