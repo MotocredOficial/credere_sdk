@@ -6,6 +6,7 @@ from credere.resources.proposals import AsyncProposals, Proposals
 from credere.resources.simulations import AsyncSimulations, Simulations
 from credere.resources.stores import AsyncStores, Stores
 from credere.resources.users import AsyncUsers, Users
+from credere.resources.utilities import AsyncUtilities, Utilities
 from credere.resources.vehicle_models import AsyncVehicleModels, VehicleModels
 
 __all__ = [
@@ -15,6 +16,7 @@ __all__ = [
     "AsyncSimulations",
     "AsyncStores",
     "AsyncUsers",
+    "AsyncUtilities",
     "AsyncVehicleModels",
     "Leads",
     "ProposalAttempts",
@@ -22,5 +24,6 @@ __all__ = [
     "Simulations",
     "Stores",
     "Users",
+    "Utilities",
     "VehicleModels",
 ]
