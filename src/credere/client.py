@@ -10,6 +10,7 @@ from credere.resources.proposal_attempts import AsyncProposalAttempts, ProposalA
 from credere.resources.proposals import AsyncProposals, Proposals
 from credere.resources.simulations import AsyncSimulations, Simulations
 from credere.resources.stores import AsyncStores, Stores
+from credere.resources.users import AsyncUsers, Users
 from credere.resources.vehicle_models import AsyncVehicleModels, VehicleModels
 
 _DEFAULT_BASE_URL = "https://api.credere.com"
@@ -39,6 +40,7 @@ class CredereClient:
         self.vehicle_models = VehicleModels(self._http, store_id=store_id)
         self.proposal_attempts = ProposalAttempts(self._http, store_id=store_id)
         self.stores = Stores(self._http, store_id=store_id)
+        self.users = Users(self._http, store_id=store_id)
 
     def close(self) -> None:
         self._http.close()
@@ -73,6 +75,7 @@ class AsyncCredereClient:
         self.vehicle_models = AsyncVehicleModels(self._http, store_id=store_id)
         self.proposal_attempts = AsyncProposalAttempts(self._http, store_id=store_id)
         self.stores = AsyncStores(self._http, store_id=store_id)
+        self.users = AsyncUsers(self._http, store_id=store_id)
 
     async def close(self) -> None:
         await self._http.aclose()

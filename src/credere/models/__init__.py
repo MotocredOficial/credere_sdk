@@ -29,6 +29,7 @@ from credere.models.simulations import (
     SimulationVehicleRequest,
 )
 from credere.models.stores import Store, StoreCreateRequest
+from credere.models.users import User, UserAccount, UserRole
 from credere.models.vehicle_models import (
     VehicleBrand,
     VehicleFuel,
@@ -61,6 +62,9 @@ __all__ = [
     "SimulationVehicleRequest",
     "Store",
     "StoreCreateRequest",
+    "User",
+    "UserAccount",
+    "UserRole",
     "VehicleBrand",
     "VehicleFuel",
     "VehicleModel",
