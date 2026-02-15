@@ -8,6 +8,10 @@ from credere.models.leads import (
     LeadCreateRequest,
     LeadRequiredFields,
 )
+from credere.models.proposal_attempts import (
+    ProposalAttempt,
+    ProposalAttemptCreateRequest,
+)
 from credere.models.proposals import (
     Proposal,
     ProposalCondition,
@@ -43,6 +47,8 @@ __all__ = [
     "LeadCreateRequest",
     "LeadRequiredFields",
     "Proposal",
+    "ProposalAttempt",
+    "ProposalAttemptCreateRequest",
     "ProposalCondition",
     "ProposalConditionRequest",
     "ProposalCreateRequest",
