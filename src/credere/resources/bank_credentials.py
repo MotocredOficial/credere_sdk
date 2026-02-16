@@ -40,12 +40,18 @@ class BankCredentials:
 
     def list(
         self,
+        *,
         store_id: int,
+        bank_codes: list[str] | None = None,
     ) -> list[IntegratedBank]:
+        params = {}
+        if bank_codes:
+            params["bank_codes"] = bank_codes
         try:
             response = self._client.get(
                 f"/v1/stores/{store_id}/integrated_banks",
                 headers=self._headers(),
+                params=params or None,
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
@@ -87,8 +93,13 @@ class AsyncBankCredentials:
 
     async def list(
         self,
+        *,
         store_id: int,
+        bank_codes: list[str] | None = None,
     ) -> list[IntegratedBank]:
+        params = {}
+        if bank_codes:
+            params["bank_codes"] = bank_codes
         try:
             response = await self._client.get(
                 f"/v1/stores/{store_id}/integrated_banks",

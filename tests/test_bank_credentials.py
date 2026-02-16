@@ -48,7 +48,28 @@ class TestBankCredentialsList:
             )
         )
 
-        result = sync_client.bank_credentials.list(STORE_ID)
+        result = sync_client.bank_credentials.list(store_id=STORE_ID)
+
+        assert route.called
+        assert len(result) == 1
+        assert isinstance(result[0], IntegratedBank)
+        assert result[0].credentials_status == "active"
+
+    @respx.mock
+    def test_list_with_params(self, sync_client: CredereClient) -> None:
+        # TODO: vary test mock result
+
+        route = respx.get(f"{BASE_URL}/v1/stores/{STORE_ID}/integrated_banks").mock(
+            return_value=httpx.Response(
+                200,
+                json={"integrated_banks": [SAMPLE_INTEGRATED_BANK]}
+            )
+        )
+
+        result = sync_client.bank_credentials.list(
+            store_id=STORE_ID,
+            bank_codes=["001", "237", "341"]
+        )
 
         assert route.called
         assert len(result) == 1
@@ -72,7 +93,7 @@ class TestErrorMapping:
         )
 
         with pytest.raises(AuthenticationError) as exc_info:
-            sync_client.bank_credentials.list(STORE_ID)
+            sync_client.bank_credentials.list(store_id=STORE_ID)
 
         assert exc_info.value.status_code == 401
 
@@ -92,7 +113,28 @@ class TestAsyncBankCredentialsList:
             )
         )
 
-        result = await async_client.bank_credentials.list(STORE_ID)
+        result = await async_client.bank_credentials.list(store_id=STORE_ID)
+
+        assert route.called
+        assert len(result) == 1
+        assert isinstance(result[0], IntegratedBank)
+        assert result[0].credentials_status == "active"
+
+    @respx.mock
+    async def test_async_list_with_params(self, async_client: AsyncCredereClient) -> None:
+        # TODO: vary test mock result
+
+        route = respx.get(f"{BASE_URL}/v1/stores/{STORE_ID}/integrated_banks").mock(
+            return_value=httpx.Response(
+                200,
+                json={"integrated_banks": [SAMPLE_INTEGRATED_BANK]}
+            )
+        )
+
+        result = await async_client.bank_credentials.list(
+            store_id=STORE_ID,
+            bank_codes=["001", "237", "341"]
+        )
 
         assert route.called
         assert len(result) == 1

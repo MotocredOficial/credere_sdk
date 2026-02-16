@@ -529,7 +529,7 @@ class TestE2EWorkflow:
                 json={"integrated_banks": [INTEGRATED_BANK_RESP]},
             )
         )
-        result = sync_client.bank_credentials.list(STORE_ID)
+        result = sync_client.bank_credentials.list(store_id=STORE_ID)
         assert r16.called
         assert isinstance(result, list)
         assert len(result) == 1
@@ -1306,7 +1306,7 @@ class TestE2EWorkflow:
                 json={"integrated_banks": [INTEGRATED_BANK_RESP]},
             )
         )
-        result = await async_client.bank_credentials.list(STORE_ID)
+        result = await async_client.bank_credentials.list(store_id=STORE_ID)
         assert r16.called
         assert isinstance(result, list)
         assert len(result) == 1
