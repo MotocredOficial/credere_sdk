@@ -16,3 +16,4 @@ venv/
 htmlcov/
 .coverage
 coverage.xml
+*.vim
