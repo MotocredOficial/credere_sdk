@@ -184,7 +184,10 @@ class TestCustomersList:
         assert customers[0].cpf_cnpj == "12345678901"
 
     @respx.mock
-    def test_list_customers_with_inexisting_cpf(self, sync_client: CredereClient) -> None:  # noqa: E501
+    def test_list_customers_with_inexisting_cpf(
+        self,
+        sync_client: CredereClient
+    ) -> None:
         route = respx.get(CUSTOMERS_URL).mock(
             return_value=httpx.Response(200, json={"customers": []})
         )
@@ -245,7 +248,10 @@ class TestCustomersFind:
         assert customer.cpf_cnpj == "12345678901"
 
     @respx.mock
-    def test_find_customer_with_inexisting_cpf(self, sync_client: CredereClient) -> None:  # noqa: E501
+    def test_find_customer_with_inexisting_cpf(
+        self,
+        sync_client: CredereClient
+    ) -> None:
         url = f"{CUSTOMERS_URL}/find"
         route = respx.get(url).mock(
             return_value=httpx.Response(
@@ -343,7 +349,10 @@ class TestAsyncCustomersList:
         assert isinstance(customers[0], Customer)
 
     @respx.mock
-    async def test_async_list_customers_with_params(self, async_client: AsyncCredereClient) -> None:  # noqa: E501
+    async def test_async_list_customers_with_params(
+        self,
+        async_client: AsyncCredereClient
+    ) -> None:
         route = respx.get(CUSTOMERS_URL).mock(
             return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
         )
@@ -361,7 +370,10 @@ class TestAsyncCustomersList:
         assert customers[0].cpf_cnpj == "12345678901"
 
     @respx.mock
-    async def test_async_list_customers_with_inexisting_cpf(self, async_client: AsyncCredereClient) -> None:  # noqa: E501
+    async def test_async_list_customers_with_inexisting_cpf(
+        self,
+        async_client: AsyncCredereClient
+    ) -> None:
         route = respx.get(CUSTOMERS_URL).mock(
             return_value=httpx.Response(200, json={"customers": []})
         )
@@ -404,7 +416,10 @@ class TestAsyncCustomersFind:
         assert customer.cpf_cnpj == "12345678901"
 
     @respx.mock
-    async def test_async_find_customer_with_params(self, async_client: AsyncCredereClient) -> None:  # noqa: E501
+    async def test_async_find_customer_with_params(
+        self,
+        async_client: AsyncCredereClient
+    ) -> None:
         url = f"{CUSTOMERS_URL}/find"
         route = respx.get(url).mock(
             return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
@@ -420,7 +435,10 @@ class TestAsyncCustomersFind:
         assert customer.cpf_cnpj == "12345678901"
 
     @respx.mock
-    async def test_async_find_customer_with_inexisting_cpf(self, async_client: AsyncCredereClient) -> None:  # noqa: E501
+    async def test_async_find_customer_with_inexisting_cpf(
+        self,
+        async_client: AsyncCredereClient
+    ) -> None:
         url = f"{CUSTOMERS_URL}/find"
         route = respx.get(url).mock(
             return_value=httpx.Response(

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 import httpx
 
@@ -12,7 +12,7 @@ from credere.models.customers import Customer, CustomerCreateRequest
 _BASE_PATH = "/v1/customers"
 
 
-class SortOption(str, Enum):
+class SortOption(StrEnum):
     CREATED_AT_DESC = "created_at_desc"
     CREATED_AT_ASC = "created_at_asc"
     NAME_ASC = "name_asc"
