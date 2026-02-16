@@ -79,27 +79,17 @@ class Customers:
         name: str | None = None,
         sort: SortOption | None = None
     ) -> list[Customer]:
-        params = {}
-      params = {
-          key: value
-          for key, value in {
-              "per_page": per_page,
-              "page": page,
-              "cpf_cnpj": cpf_cnpj,
-              "name": name,
-              "sort": sort,
-          }.items()
-          if value is not None
-      }```
-            params["per_page"] = per_page
-        if page is not None:
-            params["page"] = page
-        if cpf_cnpj is not None:
-            params["cpf_cnpj"] = cpf_cnpj
-        if name is not None:
-            params["name"] = name
-        if sort is not None:
-            params["sort"] = sort
+        params = {
+            key: value
+            for key, value in {
+                "per_page": per_page,
+                "page": page,
+                "cpf_cnpj": cpf_cnpj,
+                "name": name,
+                "sort": sort,
+            }.items()
+            if value is not None
+        }
         try:
             response = self._client.get(
                 _BASE_PATH,
