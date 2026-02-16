@@ -77,7 +77,7 @@ class Customers:
         page: int | None = None,
         cpf_cnpj: int | None = None,
         name: str | None = None,
-        sort: SortOption | None = None
+        sort: SortOption | None = None,
     ) -> list[Customer]:
         params = {
             key: value
@@ -92,9 +92,7 @@ class Customers:
         }
         try:
             response = self._client.get(
-                _BASE_PATH,
-                headers=self._headers(store_id),
-                params=params or None
+                _BASE_PATH, headers=self._headers(store_id), params=params or None
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
@@ -205,7 +203,7 @@ class AsyncCustomers:
         page: int | None = None,
         cpf_cnpj: int | None = None,
         name: str | None = None,
-        sort: SortOption | None = None
+        sort: SortOption | None = None,
     ) -> list[Customer]:
         params = {}
         if per_page is not None:
@@ -220,9 +218,7 @@ class AsyncCustomers:
             params["sort"] = sort
         try:
             response = await self._client.get(
-                _BASE_PATH,
-                headers=self._headers(store_id),
-                params=params or None
+                _BASE_PATH, headers=self._headers(store_id), params=params or None
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)

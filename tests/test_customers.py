@@ -172,9 +172,7 @@ class TestCustomersList:
         )
 
         customers = sync_client.customers.list(
-            page=1,
-            cpf_cnpj="12345678901",
-            name="Maria"
+            page=1, cpf_cnpj="12345678901", name="Maria"
         )
 
         assert route.called
@@ -185,8 +183,7 @@ class TestCustomersList:
 
     @respx.mock
     def test_list_customers_with_inexisting_cpf(
-        self,
-        sync_client: CredereClient
+        self, sync_client: CredereClient
     ) -> None:
         route = respx.get(CUSTOMERS_URL).mock(
             return_value=httpx.Response(200, json={"customers": []})
@@ -199,6 +196,7 @@ class TestCustomersList:
         assert route.called
         assert isinstance(customers, list)
         assert len(customers) == 0
+
 
 class TestCustomersGet:
     @respx.mock
@@ -238,9 +236,7 @@ class TestCustomersFind:
             return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
         )
 
-        customer = sync_client.customers.find(
-            cpf_cnpj="12345678901"
-        )
+        customer = sync_client.customers.find(cpf_cnpj="12345678901")
 
         assert route.called
         assert isinstance(customer, Customer)
@@ -249,8 +245,7 @@ class TestCustomersFind:
 
     @respx.mock
     def test_find_customer_with_inexisting_cpf(
-        self,
-        sync_client: CredereClient
+        self, sync_client: CredereClient
     ) -> None:
         url = f"{CUSTOMERS_URL}/find"
         route = respx.get(url).mock(
@@ -260,9 +255,9 @@ class TestCustomersFind:
                     "error": {
                         "message": "Couldn't find Customer",
                         "class": "ActiveRecord::RecordNotFound",
-                        "status": 404
+                        "status": 404,
                     }
-                }
+                },
             )
         )
 
@@ -271,6 +266,7 @@ class TestCustomersFind:
 
         assert route.called
         assert exc.value.status_code == 404
+
 
 # ---------------------------------------------------------------------------
 # Error mapping tests
@@ -350,17 +346,14 @@ class TestAsyncCustomersList:
 
     @respx.mock
     async def test_async_list_customers_with_params(
-        self,
-        async_client: AsyncCredereClient
+        self, async_client: AsyncCredereClient
     ) -> None:
         route = respx.get(CUSTOMERS_URL).mock(
             return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
         )
 
         customers = await async_client.customers.list(
-            page=1,
-            cpf_cnpj="12345678901",
-            name="Maria"
+            page=1, cpf_cnpj="12345678901", name="Maria"
         )
 
         assert route.called
@@ -371,8 +364,7 @@ class TestAsyncCustomersList:
 
     @respx.mock
     async def test_async_list_customers_with_inexisting_cpf(
-        self,
-        async_client: AsyncCredereClient
+        self, async_client: AsyncCredereClient
     ) -> None:
         route = respx.get(CUSTOMERS_URL).mock(
             return_value=httpx.Response(200, json={"customers": []})
@@ -385,6 +377,7 @@ class TestAsyncCustomersList:
         assert route.called
         assert isinstance(customers, list)
         assert len(customers) == 0
+
 
 class TestAsyncCustomersGet:
     @respx.mock
@@ -399,6 +392,7 @@ class TestAsyncCustomersGet:
         assert route.called
         assert isinstance(customer, Customer)
         assert customer.id == 1
+
 
 class TestAsyncCustomersFind:
     @respx.mock
@@ -417,17 +411,14 @@ class TestAsyncCustomersFind:
 
     @respx.mock
     async def test_async_find_customer_with_params(
-        self,
-        async_client: AsyncCredereClient
+        self, async_client: AsyncCredereClient
     ) -> None:
         url = f"{CUSTOMERS_URL}/find"
         route = respx.get(url).mock(
             return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
         )
 
-        customer = await async_client.customers.find(
-            cpf_cnpj="12345678901"
-        )
+        customer = await async_client.customers.find(cpf_cnpj="12345678901")
 
         assert route.called
         assert isinstance(customer, Customer)
@@ -436,8 +427,7 @@ class TestAsyncCustomersFind:
 
     @respx.mock
     async def test_async_find_customer_with_inexisting_cpf(
-        self,
-        async_client: AsyncCredereClient
+        self, async_client: AsyncCredereClient
     ) -> None:
         url = f"{CUSTOMERS_URL}/find"
         route = respx.get(url).mock(
@@ -447,9 +437,9 @@ class TestAsyncCustomersFind:
                     "error": {
                         "message": "Couldn't find Customer",
                         "class": "ActiveRecord::RecordNotFound",
-                        "status": 404
+                        "status": 404,
                     }
-                }
+                },
             )
         )
 
