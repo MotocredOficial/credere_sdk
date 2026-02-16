@@ -80,7 +80,17 @@ class Customers:
         sort: SortOption | None = None
     ) -> list[Customer]:
         params = {}
-        if per_page is not None:
+      params = {
+          key: value
+          for key, value in {
+              "per_page": per_page,
+              "page": page,
+              "cpf_cnpj": cpf_cnpj,
+              "name": name,
+              "sort": sort,
+          }.items()
+          if value is not None
+      }```
             params["per_page"] = per_page
         if page is not None:
             params["page"] = page
