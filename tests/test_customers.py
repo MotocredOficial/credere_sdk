@@ -165,6 +165,38 @@ class TestCustomersList:
         assert isinstance(customers[0], Customer)
         assert customers[0].cpf_cnpj == "12345678901"
 
+    @respx.mock
+    def test_list_customers_with_params(self, sync_client: CredereClient) -> None:
+        route = respx.get(CUSTOMERS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
+        )
+
+        customers = sync_client.customers.list(
+            page=1, cpf_cnpj="12345678901", name="Maria"
+        )
+
+        assert route.called
+        assert isinstance(customers, list)
+        assert len(customers) == 1
+        assert isinstance(customers[0], Customer)
+        assert customers[0].cpf_cnpj == "12345678901"
+
+    @respx.mock
+    def test_list_customers_with_inexisting_cpf(
+        self, sync_client: CredereClient
+    ) -> None:
+        route = respx.get(CUSTOMERS_URL).mock(
+            return_value=httpx.Response(200, json={"customers": []})
+        )
+
+        customers = sync_client.customers.list(
+            cpf_cnpj="00000000000",
+        )
+
+        assert route.called
+        assert isinstance(customers, list)
+        assert len(customers) == 0
+
 
 class TestCustomersGet:
     @respx.mock
@@ -196,6 +228,44 @@ class TestCustomersFind:
         assert isinstance(customer, Customer)
         assert customer.id == 1
         assert customer.cpf_cnpj == "12345678901"
+
+    @respx.mock
+    def test_find_customer_with_params(self, sync_client: CredereClient) -> None:
+        url = f"{CUSTOMERS_URL}/find"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
+        )
+
+        customer = sync_client.customers.find(cpf_cnpj="12345678901")
+
+        assert route.called
+        assert isinstance(customer, Customer)
+        assert customer.id == 1
+        assert customer.cpf_cnpj == "12345678901"
+
+    @respx.mock
+    def test_find_customer_with_inexisting_cpf(
+        self, sync_client: CredereClient
+    ) -> None:
+        url = f"{CUSTOMERS_URL}/find"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(
+                404,
+                json={
+                    "error": {
+                        "message": "Couldn't find Customer",
+                        "class": "ActiveRecord::RecordNotFound",
+                        "status": 404,
+                    }
+                },
+            )
+        )
+
+        with pytest.raises(NotFoundError) as exc:
+            sync_client.customers.find(cpf="00000000000")
+
+        assert route.called
+        assert exc.value.status_code == 404
 
 
 # ---------------------------------------------------------------------------
@@ -274,6 +344,40 @@ class TestAsyncCustomersList:
         assert len(customers) == 1
         assert isinstance(customers[0], Customer)
 
+    @respx.mock
+    async def test_async_list_customers_with_params(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(CUSTOMERS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
+        )
+
+        customers = await async_client.customers.list(
+            page=1, cpf_cnpj="12345678901", name="Maria"
+        )
+
+        assert route.called
+        assert isinstance(customers, list)
+        assert len(customers) == 1
+        assert isinstance(customers[0], Customer)
+        assert customers[0].cpf_cnpj == "12345678901"
+
+    @respx.mock
+    async def test_async_list_customers_with_inexisting_cpf(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(CUSTOMERS_URL).mock(
+            return_value=httpx.Response(200, json={"customers": []})
+        )
+
+        customers = await async_client.customers.list(
+            cpf_cnpj="00000000000",
+        )
+
+        assert route.called
+        assert isinstance(customers, list)
+        assert len(customers) == 0
+
 
 class TestAsyncCustomersGet:
     @respx.mock
@@ -288,3 +392,59 @@ class TestAsyncCustomersGet:
         assert route.called
         assert isinstance(customer, Customer)
         assert customer.id == 1
+
+
+class TestAsyncCustomersFind:
+    @respx.mock
+    async def test_async_find_customer(self, async_client: AsyncCredereClient) -> None:
+        url = f"{CUSTOMERS_URL}/find"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
+        )
+
+        customer = await async_client.customers.find(cpf_cnpj="12345678901")
+
+        assert route.called
+        assert isinstance(customer, Customer)
+        assert customer.id == 1
+        assert customer.cpf_cnpj == "12345678901"
+
+    @respx.mock
+    async def test_async_find_customer_with_params(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        url = f"{CUSTOMERS_URL}/find"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
+        )
+
+        customer = await async_client.customers.find(cpf_cnpj="12345678901")
+
+        assert route.called
+        assert isinstance(customer, Customer)
+        assert customer.id == 1
+        assert customer.cpf_cnpj == "12345678901"
+
+    @respx.mock
+    async def test_async_find_customer_with_inexisting_cpf(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        url = f"{CUSTOMERS_URL}/find"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(
+                404,
+                json={
+                    "error": {
+                        "message": "Couldn't find Customer",
+                        "class": "ActiveRecord::RecordNotFound",
+                        "status": 404,
+                    }
+                },
+            )
+        )
+
+        with pytest.raises(NotFoundError) as exc:
+            await async_client.customers.find(cpf="00000000000")
+
+        assert route.called
+        assert exc.value.status_code == 404

@@ -2,12 +2,21 @@
 
 from __future__ import annotations
 
+from enum import StrEnum
+
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
 from credere.models.customers import Customer, CustomerCreateRequest
 
 _BASE_PATH = "/v1/customers"
+
+
+class SortOption(StrEnum):
+    CREATED_AT_DESC = "created_at_desc"
+    CREATED_AT_ASC = "created_at_asc"
+    NAME_ASC = "name_asc"
+    NAME_DESC = "name_desc"
 
 
 class Customers:
@@ -60,11 +69,30 @@ class Customers:
         raise_for_status(response)
         return Customer.model_validate(response.json()["customer"])
 
-    def list(self, *, store_id: int | None = None) -> list[Customer]:
+    def list(
+        self,
+        *,
+        store_id: int | None = None,
+        per_page: int | None = None,
+        page: int | None = None,
+        cpf_cnpj: int | None = None,
+        name: str | None = None,
+        sort: SortOption | None = None,
+    ) -> list[Customer]:
+        params = {
+            key: value
+            for key, value in {
+                "per_page": per_page,
+                "page": page,
+                "cpf_cnpj": cpf_cnpj,
+                "name": name,
+                "sort": sort,
+            }.items()
+            if value is not None
+        }
         try:
             response = self._client.get(
-                _BASE_PATH,
-                headers=self._headers(store_id),
+                _BASE_PATH, headers=self._headers(store_id), params=params or None
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
@@ -93,13 +121,22 @@ class Customers:
         self,
         *,
         store_id: int | None = None,
-        **params: str,
+        cpf_cnpj: str | None = None,
+        cpf: str | None = None,
+        cnpj: str | None = None,
     ) -> Customer:
+        params = {}
+        if cpf_cnpj:
+            params["cpf_cnpj"] = cpf_cnpj
+        if cpf:
+            params["cpf"] = cpf
+        if cnpj:
+            params["cnpj"] = cnpj
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/find",
-                params=params,
                 headers=self._headers(store_id),
+                params=params or None,
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
@@ -158,11 +195,30 @@ class AsyncCustomers:
         raise_for_status(response)
         return Customer.model_validate(response.json()["customer"])
 
-    async def list(self, *, store_id: int | None = None) -> list[Customer]:
+    async def list(
+        self,
+        *,
+        store_id: int | None = None,
+        per_page: int | None = None,
+        page: int | None = None,
+        cpf_cnpj: int | None = None,
+        name: str | None = None,
+        sort: SortOption | None = None,
+    ) -> list[Customer]:
+        params = {}
+        if per_page is not None:
+            params["per_page"] = per_page
+        if page is not None:
+            params["page"] = page
+        if cpf_cnpj is not None:
+            params["cpf_cnpj"] = cpf_cnpj
+        if name is not None:
+            params["name"] = name
+        if sort is not None:
+            params["sort"] = sort
         try:
             response = await self._client.get(
-                _BASE_PATH,
-                headers=self._headers(store_id),
+                _BASE_PATH, headers=self._headers(store_id), params=params or None
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
@@ -191,13 +247,22 @@ class AsyncCustomers:
         self,
         *,
         store_id: int | None = None,
-        **params: str,
+        cpf_cnpj: str | None = None,
+        cpf: str | None = None,
+        cnpj: str | None = None,
     ) -> Customer:
+        params = {}
+        if cpf_cnpj:
+            params["cpf_cnpj"] = cpf_cnpj
+        if cpf:
+            params["cpf"] = cpf
+        if cnpj:
+            params["cnpj"] = cnpj
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/find",
-                params=params,
                 headers=self._headers(store_id),
+                params=params or None,
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
