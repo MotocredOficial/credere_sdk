@@ -25,10 +25,6 @@ from credere.models.leads import (
     LeadRequiredFields,
 )
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
-from credere.models.proposal_attempts import (
-    ProposalAttempt,
-    ProposalAttemptCreateRequest,
-)
 from credere.models.simulations import (
     Bank,
     Simulation,
@@ -74,8 +70,6 @@ __all__ = [
     "NotFoundError",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
-    "ProposalAttempt",
-    "ProposalAttemptCreateRequest",
     "ProposalCondition",
     "ProposalConditionRequest",
     "ProposalCreateRequest",
