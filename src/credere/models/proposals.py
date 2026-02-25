@@ -33,22 +33,6 @@ class ProposalData(BaseModel):
     licensing_city: str | None = None
 
 
-class ProposalCreateRequest(BaseModel):
-    """Top-level input for creating a proposal."""
-
-    proposal: ProposalData
-
-
-class ProposalUpdateRequest(BaseModel):
-    """Top-level input for updating a proposal."""
-
-    model_config = ConfigDict(extra="allow")
-
-    id: int
-
-    proposal: ProposalData
-
-
 class Phone(BaseModel):
     code: int
     number: int
@@ -155,22 +139,22 @@ class ProposalAttemptResponse(BaseModel):
     application: Application
     external_simulation_uuid: str
     simulation_condition_id: int
-    external_proposal_uuid: str
-    integration_error: IntegrationError
+    external_proposal_uuid: str | None = None
+    integration_error: IntegrationError | None = None
     state_rank: int
-    bank_proposal_identifier: str
-    honda_id: str
+    bank_proposal_identifier: str | None = None
+    honda_id: str | None = None
     simulation_pre_approval_status: int
     fixed_installments: bool
-    cet_monthly: float
-    cet_annually: float
+    cet_monthly: float | None = None
+    cet_annually: float | None = None
     return_value_cents: int | None = None
     formalization_state: str | None = None
     formalization: str | None = None
     replaced_by_proposal_attempt_id: int | None = None
     replaces_proposal_attempt_id: int | None = None
-    has_accessory: bool
-    value_of_the_accessory_in_cents: int
+    has_accessory: bool | None = None
+    value_of_the_accessory_in_cents: int | None = None
 
     expenses: list[ExpenseInfo]
     payment_flow: list[PaymentFlowItem]
@@ -213,7 +197,7 @@ class VehicleModel(BaseModel):
     year_start: int
     active: bool
     public_price_cents: int
-    public_price_as_string: str
+    public_price_as_string: str | None = None
     publish: bool
     fipe_code: str
     public_picture: str | None = None
@@ -226,7 +210,7 @@ class VehicleModel(BaseModel):
 # ---- Main Proposal ----
 
 
-class ProposalCreateResponse(BaseModel):
+class ProposalResponse(BaseModel):
     object_type: str
     id: int
     created_at: datetime
@@ -257,11 +241,3 @@ class ProposalCreateResponse(BaseModel):
     proposal_attempt: ProposalAttemptResponse
     vehicle_model: VehicleModel
     fuel: Fuel
-
-
-class ProposalGetResponse(BaseModel):
-    proposal: ProposalCreateResponse
-
-
-class ProposalListResponse(BaseModel):
-    proposals: list[ProposalCreateResponse]

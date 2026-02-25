@@ -5,11 +5,8 @@ import respx
 from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.proposals import (
-    ProposalCreateRequest,
-    ProposalCreateResponse,
-    ProposalGetResponse,
-    ProposalListResponse,
-    ProposalUpdateRequest,
+    ProposalData,
+    ProposalResponse,
 )
 
 BASE_URL = "https://api.credere.com"
@@ -31,199 +28,167 @@ SAMPLE_PROPOSAL_CREATE_DATA = {
 }
 
 SAMPLE_PROPOSAL_CREATE_RESPONSE = {
-    "object_type": "CdcProposal",
-    "id": 1,
-    "created_at": "2022-01-01T00:00:00.000-00:00",
-    "updated_at": "2022-01-01T00:00:00.000-00:00",
-    "customer": {
+    "complete_proposal": {
+        "object_type": "CdcProposal",
         "id": 1,
-        "name": "Cliente 1",
-        "cpf": "000.000.000-00",
-        "cnpj": None,
-        "born_at": "2000-01-01",
-        "phones": [{"code": 84, "number": 987654321}],
-    },
-    "seller": {"id": 1, "name": "Nome do vendedor"},
-    "state": "checagem",
-    "store": {"id": 1, "name": "Credere", "seller_can_send_proposal_to_bank": True},
-    "year_of_model": 2022,
-    "year_of_manufacture": 2022,
-    "comments_count": 0,
-    "external_simulation_uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
-    "sent_to_bank": True,
-    "zero_km": True,
-    "commercial": False,
-    "creation_external_link_id": None,
-    "licensing_uf": "RN",
-    "licensing_city": "Natal",
-    "chassi_code": None,
-    "license_plate_code": None,
-    "renavam_code": None,
-    "km_mileage": None,
-    "color": None,
-    "proposal_attempt": {
-        "object_type": "ProposalAttemp",
-        "id": 1,
-        "created_at": "2022-01-01T00:00:00.000-00:00",
-        "updated_at": "2022-01-01T00:00:00.000-00:00",
-        "active": True,
-        "bank": {
-            "id": 116,
-            "name": "Itaú Unibanco S.A.",
-            "tradename": "Itaú",
-            "febraban_code": "341",
+        "created_at": "2022-03-04T15:02:23-03:00",
+        "updated_at": "2022-03-04T15:02:23-03:00",
+        "customer": {
+            "id": 1,
+            "name": "Cliente 1",
+            "cpf": "615.211.390-32",
+            "cnpj": None,
+            "born_at": "1980-10-13",
+            "phones": [{"code": 84, "number": 990000001}],
         },
-        "input_financing_in_cents": 1000000,
-        "plan": {"return": "1", "return_offset": None},
-        "quota_in_cents": 10000,
+        "seller": {"id": 2, "name": "Diretor"},
         "state": "checagem",
-        "table": {"description": "TABLE DESCRIPTION"},
-        "term_financing": 12,
-        "value_in_cents": 1000000,
-        "obs": None,
-        "value_of_the_license_plate_in_cents": 0,
-        "financed_amount_in_cents": 1000000,
-        "coefficient": None,
-        "has_license_plate": False,
-        "first_payment_in_days": 30,
-        "funding_type": {"id": 1, "name": "CDC"},
-        "payment_type": {"id": 1, "name": "Carnê"},
-        "input_origin": 1,
-        "application": {"id": 1, "name": "Grupo X"},
-        "external_simulation_uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
-        "simulation_condition_id": 1,
-        "external_proposal_uuid": "ffffffff-gggg-hhhh-iiii-jjjjjjjjjjjj",
-        "integration_error": {
-            "error": "",
-            "message": "translation missing: pt.integration_error.message",
-            "error_details": "",
+        "store": {"id": 1, "name": "Credere", "seller_can_send_proposal_to_bank": True},
+        "year_of_model": 2021,
+        "year_of_manufacture": 2021,
+        "comments_count": 0,
+        "external_simulation_uuid": "42c2e9f5-a422-4d45-b2ab-180694d63f3c",
+        "sent_to_bank": False,
+        "zero_km": True,
+        "commercial": False,
+        "creation_external_link_id": None,
+        "licensing_uf": "RN",
+        "chassi_code": None,
+        "license_plate_code": None,
+        "renavam_code": None,
+        "km_mileage": None,
+        "color": None,
+        "proposal_attempt": {
+            "object_type": "ProposalAttemp",
+            "id": 1,
+            "created_at": "2022-03-04T15:02:23-03:00",
+            "updated_at": "2022-03-04T15:02:23-03:00",
+            "active": True,
+            "bank": {
+                "id": 90,
+                "name": "Banco Votorantim S.A.",
+                "tradename": "Banco Votorantim",
+                "febraban_code": "655",
+            },
+            "input_financing_in_cents": 400000,
+            "plan": {"return": "0.0"},
+            "quota_in_cents": 55712,
+            "state": "checagem",
+            "table": {"description": "BVMIY - motos"},
+            "term_financing": 12,
+            "value_in_cents": 900000,
+            "obs": None,
+            "value_of_the_license_plate_in_cents": 50000,
+            "financed_amount_in_cents": 589479,
+            "coefficient": None,
+            "has_license_plate": True,
+            "first_payment_in_days": 30,
+            "funding_type": {"id": 1, "name": "CDC"},
+            "payment_type": {"id": 1, "name": "Carnê"},
+            "input_origin": 1,
+            "application": {"id": 1, "name": "Grupo X"},
+            "external_simulation_uuid": "42c2e9f5-a422-4d45-b2ab-180694d63f3c",
+            "simulation_condition_id": 19,
+            "external_proposal_uuid": None,
+            "integration_error": None,
+            "state_rank": 6,
+            "bank_proposal_identifier": None,
+            "honda_id": None,
+            "simulation_pre_approval_status": 2,
+            "fixed_installments": True,
+            "cet_monthly": None,
+            "cet_annually": None,
+            "replaced_by_proposal_attempt_id": None,
+            "return_value_cents": None,
+            "formalization_state": None,
+            "formalization": None,
+            "expenses": [
+                {
+                    "object_type": "ExpenseInfo",
+                    "id": 2,
+                    "created_at": "2022-03-04T15:02:23-03:00",
+                    "updated_at": "2022-03-04T15:02:23-03:00",
+                    "value_in_cents": 32579,
+                    "credere_type": "spf",
+                    "description": None,
+                    "expense": None,
+                },
+                {
+                    "object_type": "ExpenseInfo",
+                    "id": 1,
+                    "created_at": "2022-03-04T15:02:23-03:00",
+                    "updated_at": "2022-03-04T15:02:23-03:00",
+                    "value_in_cents": 56900,
+                    "credere_type": "contract_record_rate",
+                    "description": None,
+                    "expense": None,
+                },
+            ],
+            "payment_flow": [
+                {"installment_number": 12, "value_cents": 55712},
+                {"installment_number": 11, "value_cents": 55712},
+                {"installment_number": 10, "value_cents": 55712},
+                {"installment_number": 9, "value_cents": 55712},
+                {"installment_number": 8, "value_cents": 55712},
+                {"installment_number": 7, "value_cents": 55712},
+                {"installment_number": 6, "value_cents": 55712},
+                {"installment_number": 5, "value_cents": 55712},
+                {"installment_number": 4, "value_cents": 55712},
+                {"installment_number": 3, "value_cents": 55712},
+                {"installment_number": 2, "value_cents": 55712},
+                {"installment_number": 1, "value_cents": 55712},
+            ],
         },
-        "state_rank": 2,
-        "bank_proposal_identifier": "kkkkkkkk-llll-mmmm-nnnn-oooooooooooo",
-        "honda_id": "kkkkkkkk-llll-mmmm-nnnn-oooooooooooo",
-        "simulation_pre_approval_status": 1,
-        "fixed_installments": True,
-        "cet_monthly": 1,
-        "cet_annually": 10,
-        "return_value_cents": None,
-        "formalization_state": None,
-        "formalization": None,
-        "replaced_by_proposal_attempt_id": None,
-        "replaces_proposal_attempt_id": None,
-        "has_accessory": False,
-        "value_of_the_accessory_in_cents": 0,
-        "expenses": [
-            {
-                "object_type": "ExpenseInfo",
+        "vehicle_model": {
+            "object_type": "VehicleModel",
+            "id": 1,
+            "created_at": "2022-03-03T08:25:49-03:00",
+            "updated_at": "2022-03-03T11:16:37-03:00",
+            "name": "Biz",
+            "brand": "Honda",
+            "molicar_code": "01906112-2",
+            "version": "110i CBS",
+            "year_end": 2021,
+            "year_start": 2020,
+            "active": True,
+            "public_price_cents": 900000,
+            "public_price_as_string": None,
+            "publish": False,
+            "fipe_code": "811138-3",
+            "public_picture": None,
+            "vehicle_brand": {"id": 1, "name": "Honda"},
+            "fuel": {
+                "object_type": "Fuel",
                 "id": 1,
-                "created_at": "2022-01-01T00:00:00.000-00:00",
-                "updated_at": "2022-01-01T00:00:00.000-00:00",
-                "value_in_cents": 0,
-                "credere_type": "register_rate",
-                "description": None,
-                "expense": None,
+                "created_at": "2022-03-03T08:22:28-03:00",
+                "updated_at": "2022-03-03T08:22:28-03:00",
+                "name": "Gasolina",
             },
-            {
-                "object_type": "ExpenseInfo",
-                "id": 2,
-                "created_at": "2022-01-01T00:00:00.000-00:00",
-                "updated_at": "2022-01-01T00:00:00.000-00:00",
-                "value_in_cents": 10000,
-                "credere_type": "contract_record_rate",
-                "description": None,
-                "expense": None,
-            },
-            {
-                "object_type": "ExpenseInfo",
+            "vehicle_type": {
+                "created_at": "2022-03-03T08:22:16-03:00",
+                "honda_code": "MOT",
                 "id": 3,
-                "created_at": "2022-01-01T00:00:00.000-00:00",
-                "updated_at": "2022-01-01T00:00:00.000-00:00",
-                "value_in_cents": 10000,
-                "credere_type": "property_valuation_rate",
-                "description": None,
-                "expense": None,
+                "name": "Motos",
+                "updated_at": "2022-03-03T08:22:16-03:00",
             },
-            {
-                "object_type": "ExpenseInfo",
-                "id": 4,
-                "created_at": "2022-01-01T00:00:00.000-00:00",
-                "updated_at": "2022-01-01T00:00:00.000-00:00",
-                "value_in_cents": 10000,
-                "credere_type": "iof_value",
-                "description": None,
-                "expense": None,
-            },
-            {
-                "object_type": "ExpenseInfo",
-                "id": 5,
-                "created_at": "2022-01-01T00:00:00.000-00:00",
-                "updated_at": "2022-01-01T00:00:00.000-00:00",
-                "value_in_cents": 10000,
-                "credere_type": "spf",
-                "description": None,
-                "expense": None,
-            },
-        ],
-        "payment_flow": [
-            {"installment_number": 12, "value_cents": 10000},
-            {"installment_number": 11, "value_cents": 10000},
-            {"installment_number": 10, "value_cents": 10000},
-            {"installment_number": 9, "value_cents": 10000},
-            {"installment_number": 8, "value_cents": 10000},
-            {"installment_number": 7, "value_cents": 10000},
-            {"installment_number": 6, "value_cents": 10000},
-            {"installment_number": 5, "value_cents": 10000},
-            {"installment_number": 4, "value_cents": 10000},
-            {"installment_number": 3, "value_cents": 10000},
-            {"installment_number": 2, "value_cents": 10000},
-            {"installment_number": 1, "value_cents": 10000},
-        ],
-    },
-    "vehicle_model": {
-        "object_type": "VehicleModel",
-        "id": 1,
-        "created_at": "2022-01-01T00:00:00.000-00:00",
-        "updated_at": "2022-01-01T00:00:00.000-00:00",
-        "name": "Biz",
-        "brand": "Honda",
-        "molicar_code": "00000000-0",
-        "version": "110i CBS",
-        "year_end": 2022,
-        "year_start": 2022,
-        "active": True,
-        "public_price_cents": 1000000,
-        "public_price_as_string": "BRL",
-        "publish": False,
-        "fipe_code": "000000-0",
-        "public_picture": None,
-        "vehicle_brand": {"id": 1, "name": "Honda"},
+        },
         "fuel": {
             "object_type": "Fuel",
             "id": 1,
-            "created_at": "2022-01-01T00:00:00.000-00:00",
-            "updated_at": "2022-01-01T00:00:00.000-00:00",
+            "created_at": "2022-03-03T08:22:28-03:00",
+            "updated_at": "2022-03-03T08:22:28-03:00",
             "name": "Gasolina",
         },
-        "vehicle_type": {
-            "id": 1,
-            "name": "Motos",
-            "created_at": "2022-01-01T00:00:00.000-00:00",
-            "updated_at": "2022-01-01T00:00:00.000-00:00",
-            "honda_code": "MOT",
-        },
-    },
-    "fuel": {
-        "object_type": "Fuel",
-        "id": 1,
-        "created_at": "2022-01-01T00:00:00.000-00:00",
-        "updated_at": "2022-01-01T00:00:00.000-00:00",
-        "name": "Gasolina",
-    },
+    }
 }
 
-SAMPLE_PROPOSAL_GET_RESPONSE = {"proposal": SAMPLE_PROPOSAL_CREATE_RESPONSE}
+SAMPLE_PROPOSAL_GET_RESPONSE = {
+    "proposal": SAMPLE_PROPOSAL_CREATE_RESPONSE["complete_proposal"]
+}
 
-SAMPLE_PROPOSALS_LIST_RESPONSE = {"proposals": [SAMPLE_PROPOSAL_CREATE_RESPONSE]}
+SAMPLE_PROPOSALS_LIST_RESPONSE = {
+    "proposals": [SAMPLE_PROPOSAL_CREATE_RESPONSE["complete_proposal"]]
+}
 
 
 class TestProposalsCreate:
@@ -233,16 +198,16 @@ class TestProposalsCreate:
             return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_CREATE_RESPONSE)
         )
 
-        proposal_create = ProposalCreateRequest.model_validate(
-            SAMPLE_PROPOSAL_CREATE_DATA
+        proposal_create = ProposalData.model_validate(
+            SAMPLE_PROPOSAL_CREATE_DATA["proposal"]
         )
         proposal = sync_client.proposals.create(proposal_create)
 
         assert route.called
-        assert isinstance(proposal, ProposalCreateResponse)
+        assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
         assert (
-            proposal.external_simulation_uuid == "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+            proposal.external_simulation_uuid == "42c2e9f5-a422-4d45-b2ab-180694d63f3c"
         )
         assert len(proposal.proposal_attempt.payment_flow) == 12
 
@@ -257,10 +222,10 @@ class TestProposalsList:
         proposals = sync_client.proposals.list()
 
         assert route.called
-        assert isinstance(proposals, ProposalListResponse)
-        assert len(proposals.proposals) == 1
-        assert isinstance(proposals.proposals[0], ProposalCreateResponse)
-        assert proposals.proposals[0].id == 1
+        assert isinstance(proposals, list)
+        assert len(proposals) == 1
+        assert isinstance(proposals[0], ProposalResponse)
+        assert proposals[0].id == 1
 
 
 class TestProposalsGet:
@@ -275,8 +240,8 @@ class TestProposalsGet:
         proposal = sync_client.proposals.get(proposal_id)
 
         assert route.called
-        assert isinstance(proposal, ProposalGetResponse)
-        assert proposal.proposal.id == 1
+        assert isinstance(proposal, ProposalResponse)
+        assert proposal.id == 1
 
 
 class TestProposalsUpdate:
@@ -284,22 +249,23 @@ class TestProposalsUpdate:
     def test_update_proposal(self, sync_client: CredereClient) -> None:
         proposal_id = 1
         url = f"{PROPOSALS_URL}/{proposal_id}"
-        new_proposal_data = SAMPLE_PROPOSAL_CREATE_DATA.copy()
+        new_proposal_data = SAMPLE_PROPOSAL_CREATE_DATA["proposal"].copy()
         new_proposal_data["commercial"] = True
-        new_proposal_data["id"] = proposal_id
-        new_proposal_data_resp = SAMPLE_PROPOSAL_CREATE_RESPONSE.copy()
+        new_proposal_data_resp = SAMPLE_PROPOSAL_CREATE_RESPONSE[
+            "complete_proposal"
+        ].copy()
         new_proposal_data_resp["commercial"] = (
-            True  # simulate the API response reflecting the update
+            True  # simulate response reflecting the update
         )
         route = respx.put(url).mock(
             return_value=httpx.Response(200, json=new_proposal_data_resp)
         )
 
-        proposal_update = ProposalUpdateRequest.model_validate(new_proposal_data)
+        proposal_update = ProposalData.model_validate(new_proposal_data)
         proposal = sync_client.proposals.update(proposal_id, proposal_update)
 
         assert route.called
-        assert isinstance(proposal, ProposalCreateResponse)
+        assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
         assert proposal.commercial is True
 
@@ -364,17 +330,17 @@ class TestAsyncProposalsCreate:
             return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_CREATE_RESPONSE)
         )
 
-        proposal_create = ProposalCreateRequest.model_validate(
-            SAMPLE_PROPOSAL_CREATE_DATA
+        proposal_create = ProposalData.model_validate(
+            SAMPLE_PROPOSAL_CREATE_DATA["proposal"]
         )
         # Added await
         proposal = await async_client.proposals.create(proposal_create)
 
         assert route.called
-        assert isinstance(proposal, ProposalCreateResponse)
+        assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
         assert (
-            proposal.external_simulation_uuid == "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+            proposal.external_simulation_uuid == "42c2e9f5-a422-4d45-b2ab-180694d63f3c"
         )
         assert len(proposal.proposal_attempt.payment_flow) == 12
 
@@ -391,10 +357,10 @@ class TestAsyncProposalsList:
         proposals = await async_client.proposals.list()
 
         assert route.called
-        assert isinstance(proposals, ProposalListResponse)
-        assert len(proposals.proposals) == 1
-        assert isinstance(proposals.proposals[0], ProposalCreateResponse)
-        assert proposals.proposals[0].id == 1
+        assert isinstance(proposals, list)
+        assert len(proposals) == 1
+        assert isinstance(proposals[0], ProposalResponse)
+        assert proposals[0].id == 1
 
 
 class TestAsyncProposalsGet:
@@ -411,8 +377,8 @@ class TestAsyncProposalsGet:
         proposal = await async_client.proposals.get(proposal_id)
 
         assert route.called
-        assert isinstance(proposal, ProposalGetResponse)
-        assert proposal.proposal.id == 1
+        assert isinstance(proposal, ProposalResponse)
+        assert proposal.id == 1
 
 
 class TestAsyncProposalsUpdate:
@@ -421,23 +387,24 @@ class TestAsyncProposalsUpdate:
     async def test_update_proposal(self, async_client: AsyncCredereClient) -> None:
         proposal_id = 1
         url = f"{PROPOSALS_URL}/{proposal_id}"
-        new_proposal_data = SAMPLE_PROPOSAL_CREATE_DATA.copy()
+        new_proposal_data = SAMPLE_PROPOSAL_CREATE_DATA["proposal"].copy()
         new_proposal_data["commercial"] = True
-        new_proposal_data["id"] = proposal_id
 
-        new_proposal_data_resp = SAMPLE_PROPOSAL_CREATE_RESPONSE.copy()
+        new_proposal_data_resp = SAMPLE_PROPOSAL_CREATE_RESPONSE[
+            "complete_proposal"
+        ].copy()
         new_proposal_data_resp["commercial"] = True
 
         route = respx.put(url).mock(
             return_value=httpx.Response(200, json=new_proposal_data_resp)
         )
 
-        proposal_update = ProposalUpdateRequest.model_validate(new_proposal_data)
+        proposal_update = ProposalData.model_validate(new_proposal_data)
         # Added await
         proposal = await async_client.proposals.update(proposal_id, proposal_update)
 
         assert route.called
-        assert isinstance(proposal, ProposalCreateResponse)
+        assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
         assert proposal.commercial is True
 
