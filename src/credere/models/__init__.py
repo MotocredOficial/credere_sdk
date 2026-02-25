@@ -20,14 +20,6 @@ from credere.models.proposal_attempts import (
     ProposalAttempt,
     ProposalAttemptCreateRequest,
 )
-from credere.models.proposals import (
-    Proposal,
-    ProposalCondition,
-    ProposalConditionRequest,
-    ProposalCreateRequest,
-    ProposalVehicle,
-    ProposalVehicleRequest,
-)
 from credere.models.simulations import (
     Bank,
     Simulation,
@@ -65,14 +57,8 @@ __all__ = [
     "LeadRequiredFields",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
-    "Proposal",
     "ProposalAttempt",
     "ProposalAttemptCreateRequest",
-    "ProposalCondition",
-    "ProposalConditionRequest",
-    "ProposalCreateRequest",
-    "ProposalVehicle",
-    "ProposalVehicleRequest",
     "Simulation",
     "SimulationCondition",
     "SimulationConditionRequest",

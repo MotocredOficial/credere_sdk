@@ -29,14 +29,6 @@ from credere.models.proposal_attempts import (
     ProposalAttempt,
     ProposalAttemptCreateRequest,
 )
-from credere.models.proposals import (
-    Proposal,
-    ProposalCondition,
-    ProposalConditionRequest,
-    ProposalCreateRequest,
-    ProposalVehicle,
-    ProposalVehicleRequest,
-)
 from credere.models.simulations import (
     Bank,
     Simulation,
@@ -82,12 +74,15 @@ __all__ = [
     "NotFoundError",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
-    "Proposal",
     "ProposalAttempt",
     "ProposalAttemptCreateRequest",
     "ProposalCondition",
     "ProposalConditionRequest",
     "ProposalCreateRequest",
+    "ProposalCreateRequest",
+    "ProposalEnvelope",
+    "ProposalResponse",
+    "ProposalUpdateRequest",
     "ProposalVehicle",
     "ProposalVehicleRequest",
     "Simulation",

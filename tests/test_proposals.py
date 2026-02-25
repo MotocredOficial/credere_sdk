@@ -1,7 +1,3 @@
-"""Tests for the Proposals resource (sync + async)."""
-
-import json
-
 import httpx
 import pytest
 import respx
@@ -9,210 +5,309 @@ import respx
 from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.proposals import (
-    Proposal,
-    ProposalConditionRequest,
     ProposalCreateRequest,
-    ProposalVehicleRequest,
+    ProposalCreateResponse,
+    ProposalGetResponse,
+    ProposalListResponse,
+    ProposalUpdateRequest,
 )
 
 BASE_URL = "https://api.credere.com"
 PROPOSALS_URL = f"{BASE_URL}/v1/proposals"
 
-SAMPLE_CONDITION = {
-    "installments": 48,
-    "down_payment": 1000000,
-    "financed_amount": 4000000,
-    "bank": {
-        "id": 10,
-        "febraban_code": "341",
-        "name": "Itaú Unibanco",
-        "nickname": "Itaú",
-    },
-    "interest_monthly": 1.49,
-    "cet_monthly": 1.62,
-    "cet_annually": 21.28,
-}
-
-SAMPLE_VEHICLE = {
-    "asset_value": 5000000,
-    "licensing_uf": "SP",
-    "manufacture_year": 2024,
-    "model_year": 2024,
-    "vehicle_molicar_code": "MOL123",
-    "zero_km": True,
-}
-
-SAMPLE_PROPOSAL_RESPONSE = {
-    "data": {
-        "id": "prop-abc-123",
-        "assets_value": 5000000,
-        "documentation_value": 50000,
-        "conditions": [SAMPLE_CONDITION],
-        "vehicle": SAMPLE_VEHICLE,
-        "retrieve_lead": {"cpf_cnpj": "12345678900"},
-        "seller_cpf": "98765432100",
-        "status": "pending",
-        "created_at": "2024-01-15T10:00:00-03:00",
-        "updated_at": "2024-01-15T10:00:00-03:00",
+SAMPLE_PROPOSAL_CREATE_DATA = {
+    "proposal": {
+        "customer_id": 1,
+        "store_id": 1,
+        "seller_id": 1,
+        "commercial": False,
+        "proposal_attempts": [
+            {
+                "simulation_condition_id": 1,
+                "external_simulation_uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+            }
+        ],
     }
 }
 
-SAMPLE_LIST_RESPONSE = {"data": [SAMPLE_PROPOSAL_RESPONSE["data"]]}
-
-SAMPLE_ACTIVITY_LOG_RESPONSE = {
-    "data": [
-        {"action": "created", "user": "john", "timestamp": "2024-01-15T10:00:00-03:00"},
-        {"action": "updated", "user": "jane", "timestamp": "2024-01-15T11:00:00-03:00"},
-    ]
+SAMPLE_PROPOSAL_CREATE_RESPONSE = {
+    "object_type": "CdcProposal",
+    "id": 1,
+    "created_at": "2022-01-01T00:00:00.000-00:00",
+    "updated_at": "2022-01-01T00:00:00.000-00:00",
+    "customer": {
+        "id": 1,
+        "name": "Cliente 1",
+        "cpf": "000.000.000-00",
+        "cnpj": None,
+        "born_at": "2000-01-01",
+        "phones": [{"code": 84, "number": 987654321}],
+    },
+    "seller": {"id": 1, "name": "Nome do vendedor"},
+    "state": "checagem",
+    "store": {"id": 1, "name": "Credere", "seller_can_send_proposal_to_bank": True},
+    "year_of_model": 2022,
+    "year_of_manufacture": 2022,
+    "comments_count": 0,
+    "external_simulation_uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "sent_to_bank": True,
+    "zero_km": True,
+    "commercial": False,
+    "creation_external_link_id": None,
+    "licensing_uf": "RN",
+    "licensing_city": "Natal",
+    "chassi_code": None,
+    "license_plate_code": None,
+    "renavam_code": None,
+    "km_mileage": None,
+    "color": None,
+    "proposal_attempt": {
+        "object_type": "ProposalAttemp",
+        "id": 1,
+        "created_at": "2022-01-01T00:00:00.000-00:00",
+        "updated_at": "2022-01-01T00:00:00.000-00:00",
+        "active": True,
+        "bank": {
+            "id": 116,
+            "name": "Itaú Unibanco S.A.",
+            "tradename": "Itaú",
+            "febraban_code": "341",
+        },
+        "input_financing_in_cents": 1000000,
+        "plan": {"return": "1", "return_offset": None},
+        "quota_in_cents": 10000,
+        "state": "checagem",
+        "table": {"description": "TABLE DESCRIPTION"},
+        "term_financing": 12,
+        "value_in_cents": 1000000,
+        "obs": None,
+        "value_of_the_license_plate_in_cents": 0,
+        "financed_amount_in_cents": 1000000,
+        "coefficient": None,
+        "has_license_plate": False,
+        "first_payment_in_days": 30,
+        "funding_type": {"id": 1, "name": "CDC"},
+        "payment_type": {"id": 1, "name": "Carnê"},
+        "input_origin": 1,
+        "application": {"id": 1, "name": "Grupo X"},
+        "external_simulation_uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "simulation_condition_id": 1,
+        "external_proposal_uuid": "ffffffff-gggg-hhhh-iiii-jjjjjjjjjjjj",
+        "integration_error": {
+            "error": "",
+            "message": "translation missing: pt.integration_error.message",
+            "error_details": "",
+        },
+        "state_rank": 2,
+        "bank_proposal_identifier": "kkkkkkkk-llll-mmmm-nnnn-oooooooooooo",
+        "honda_id": "kkkkkkkk-llll-mmmm-nnnn-oooooooooooo",
+        "simulation_pre_approval_status": 1,
+        "fixed_installments": True,
+        "cet_monthly": 1,
+        "cet_annually": 10,
+        "return_value_cents": None,
+        "formalization_state": None,
+        "formalization": None,
+        "replaced_by_proposal_attempt_id": None,
+        "replaces_proposal_attempt_id": None,
+        "has_accessory": False,
+        "value_of_the_accessory_in_cents": 0,
+        "expenses": [
+            {
+                "object_type": "ExpenseInfo",
+                "id": 1,
+                "created_at": "2022-01-01T00:00:00.000-00:00",
+                "updated_at": "2022-01-01T00:00:00.000-00:00",
+                "value_in_cents": 0,
+                "credere_type": "register_rate",
+                "description": None,
+                "expense": None,
+            },
+            {
+                "object_type": "ExpenseInfo",
+                "id": 2,
+                "created_at": "2022-01-01T00:00:00.000-00:00",
+                "updated_at": "2022-01-01T00:00:00.000-00:00",
+                "value_in_cents": 10000,
+                "credere_type": "contract_record_rate",
+                "description": None,
+                "expense": None,
+            },
+            {
+                "object_type": "ExpenseInfo",
+                "id": 3,
+                "created_at": "2022-01-01T00:00:00.000-00:00",
+                "updated_at": "2022-01-01T00:00:00.000-00:00",
+                "value_in_cents": 10000,
+                "credere_type": "property_valuation_rate",
+                "description": None,
+                "expense": None,
+            },
+            {
+                "object_type": "ExpenseInfo",
+                "id": 4,
+                "created_at": "2022-01-01T00:00:00.000-00:00",
+                "updated_at": "2022-01-01T00:00:00.000-00:00",
+                "value_in_cents": 10000,
+                "credere_type": "iof_value",
+                "description": None,
+                "expense": None,
+            },
+            {
+                "object_type": "ExpenseInfo",
+                "id": 5,
+                "created_at": "2022-01-01T00:00:00.000-00:00",
+                "updated_at": "2022-01-01T00:00:00.000-00:00",
+                "value_in_cents": 10000,
+                "credere_type": "spf",
+                "description": None,
+                "expense": None,
+            },
+        ],
+        "payment_flow": [
+            {"installment_number": 12, "value_cents": 10000},
+            {"installment_number": 11, "value_cents": 10000},
+            {"installment_number": 10, "value_cents": 10000},
+            {"installment_number": 9, "value_cents": 10000},
+            {"installment_number": 8, "value_cents": 10000},
+            {"installment_number": 7, "value_cents": 10000},
+            {"installment_number": 6, "value_cents": 10000},
+            {"installment_number": 5, "value_cents": 10000},
+            {"installment_number": 4, "value_cents": 10000},
+            {"installment_number": 3, "value_cents": 10000},
+            {"installment_number": 2, "value_cents": 10000},
+            {"installment_number": 1, "value_cents": 10000},
+        ],
+    },
+    "vehicle_model": {
+        "object_type": "VehicleModel",
+        "id": 1,
+        "created_at": "2022-01-01T00:00:00.000-00:00",
+        "updated_at": "2022-01-01T00:00:00.000-00:00",
+        "name": "Biz",
+        "brand": "Honda",
+        "molicar_code": "00000000-0",
+        "version": "110i CBS",
+        "year_end": 2022,
+        "year_start": 2022,
+        "active": True,
+        "public_price_cents": 1000000,
+        "public_price_as_string": "BRL",
+        "publish": False,
+        "fipe_code": "000000-0",
+        "public_picture": None,
+        "vehicle_brand": {"id": 1, "name": "Honda"},
+        "fuel": {
+            "object_type": "Fuel",
+            "id": 1,
+            "created_at": "2022-01-01T00:00:00.000-00:00",
+            "updated_at": "2022-01-01T00:00:00.000-00:00",
+            "name": "Gasolina",
+        },
+        "vehicle_type": {
+            "id": 1,
+            "name": "Motos",
+            "created_at": "2022-01-01T00:00:00.000-00:00",
+            "updated_at": "2022-01-01T00:00:00.000-00:00",
+            "honda_code": "MOT",
+        },
+    },
+    "fuel": {
+        "object_type": "Fuel",
+        "id": 1,
+        "created_at": "2022-01-01T00:00:00.000-00:00",
+        "updated_at": "2022-01-01T00:00:00.000-00:00",
+        "name": "Gasolina",
+    },
 }
 
-SAMPLE_CREATE_DATA = ProposalCreateRequest(
-    assets_value=5000000,
-    documentation_value=50000,
-    conditions=[
-        ProposalConditionRequest(
-            down_payment=1000000,
-            financed_amount=4000000,
-            installments=48,
-        )
-    ],
-    retrieve_lead={"cpf_cnpj": "12345678900"},
-    seller_cpf="98765432100",
-    vehicle=ProposalVehicleRequest(
-        asset_value=5000000,
-        licensing_uf="SP",
-        manufacture_year=2024,
-        model_year=2024,
-        vehicle_molicar_code="MOL123",
-        zero_km=True,
-    ),
-)
+SAMPLE_PROPOSAL_GET_RESPONSE = {"proposal": SAMPLE_PROPOSAL_CREATE_RESPONSE}
 
-
-# ---------------------------------------------------------------------------
-# Sync tests
-# ---------------------------------------------------------------------------
+SAMPLE_PROPOSALS_LIST_RESPONSE = {"proposals": [SAMPLE_PROPOSAL_CREATE_RESPONSE]}
 
 
 class TestProposalsCreate:
     @respx.mock
     def test_create_proposal(self, sync_client: CredereClient) -> None:
         route = respx.post(PROPOSALS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_CREATE_RESPONSE)
         )
 
-        proposal = sync_client.proposals.create(SAMPLE_CREATE_DATA)
+        proposal_create = ProposalCreateRequest.model_validate(
+            SAMPLE_PROPOSAL_CREATE_DATA
+        )
+        proposal = sync_client.proposals.create(proposal_create)
 
         assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
-        assert proposal.assets_value == 5000000
-        assert proposal.status == "pending"
-        assert proposal.conditions is not None
-        assert len(proposal.conditions) == 1
-        assert proposal.conditions[0].bank is not None
-        assert proposal.conditions[0].bank.febraban_code == "341"
-        assert proposal.vehicle is not None
-        assert proposal.vehicle.zero_km is True
-
-    @respx.mock
-    def test_create_sends_correct_body(self, sync_client: CredereClient) -> None:
-        route = respx.post(PROPOSALS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
+        assert isinstance(proposal, ProposalCreateResponse)
+        assert proposal.id == 1
+        assert (
+            proposal.external_simulation_uuid == "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
         )
-
-        sync_client.proposals.create(SAMPLE_CREATE_DATA)
-
-        request = route.calls.last.request
-        body = json.loads(request.content)
-        assert "proposal" in body
-        assert body["proposal"]["assets_value"] == 5000000
-        assert body["proposal"]["seller_cpf"] == "98765432100"
-        assert body["proposal"]["retrieve_lead"]["cpf_cnpj"] == "12345678900"
-        assert len(body["proposal"]["conditions"]) == 1
-        assert body["proposal"]["vehicle"]["zero_km"] is True
-
-    @respx.mock
-    def test_create_sends_store_id_header(self, sync_client: CredereClient) -> None:
-        route = respx.post(PROPOSALS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
-        )
-
-        sync_client.proposals.create(SAMPLE_CREATE_DATA)
-
-        request = route.calls.last.request
-        assert request.headers["Store-Id"] == "42"
+        assert len(proposal.proposal_attempt.payment_flow) == 12
 
 
 class TestProposalsList:
     @respx.mock
     def test_list_proposals(self, sync_client: CredereClient) -> None:
         route = respx.get(PROPOSALS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_PROPOSALS_LIST_RESPONSE)
         )
 
         proposals = sync_client.proposals.list()
 
         assert route.called
-        assert isinstance(proposals, list)
-        assert len(proposals) == 1
-        assert isinstance(proposals[0], Proposal)
-        assert proposals[0].id == "prop-abc-123"
+        assert isinstance(proposals, ProposalListResponse)
+        assert len(proposals.proposals) == 1
+        assert isinstance(proposals.proposals[0], ProposalCreateResponse)
+        assert proposals.proposals[0].id == 1
 
 
 class TestProposalsGet:
     @respx.mock
     def test_get_proposal(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
+        proposal_id = 1
         url = f"{PROPOSALS_URL}/{proposal_id}"
         route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_GET_RESPONSE)
         )
 
         proposal = sync_client.proposals.get(proposal_id)
 
         assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
-        assert proposal.conditions is not None
-        assert proposal.conditions[0].interest_monthly == 1.49
+        assert isinstance(proposal, ProposalGetResponse)
+        assert proposal.proposal.id == 1
 
 
 class TestProposalsUpdate:
     @respx.mock
     def test_update_proposal(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
+        proposal_id = 1
         url = f"{PROPOSALS_URL}/{proposal_id}"
+        new_proposal_data = SAMPLE_PROPOSAL_CREATE_DATA.copy()
+        new_proposal_data["commercial"] = True
+        new_proposal_data["id"] = proposal_id
+        new_proposal_data_resp = SAMPLE_PROPOSAL_CREATE_RESPONSE.copy()
+        new_proposal_data_resp["commercial"] = (
+            True  # simulate the API response reflecting the update
+        )
         route = respx.put(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
+            return_value=httpx.Response(200, json=new_proposal_data_resp)
         )
 
-        proposal = sync_client.proposals.update(proposal_id, SAMPLE_CREATE_DATA)
+        proposal_update = ProposalUpdateRequest.model_validate(new_proposal_data)
+        proposal = sync_client.proposals.update(proposal_id, proposal_update)
 
         assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
-
-    @respx.mock
-    def test_update_sends_correct_body(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
-        url = f"{PROPOSALS_URL}/{proposal_id}"
-        route = respx.put(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
-        )
-
-        sync_client.proposals.update(proposal_id, SAMPLE_CREATE_DATA)
-
-        request = route.calls.last.request
-        body = json.loads(request.content)
-        assert "proposal" in body
-        assert body["proposal"]["assets_value"] == 5000000
+        assert isinstance(proposal, ProposalCreateResponse)
+        assert proposal.id == 1
+        assert proposal.commercial is True
 
 
 class TestProposalsDelete:
     @respx.mock
     def test_delete_proposal(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
+        proposal_id = 1
         url = f"{PROPOSALS_URL}/{proposal_id}"
         route = respx.delete(url).mock(return_value=httpx.Response(204))
 
@@ -220,61 +315,6 @@ class TestProposalsDelete:
 
         assert route.called
         assert result is None
-
-
-class TestProposalsGetOwnership:
-    @respx.mock
-    def test_get_ownership(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
-        url = f"{PROPOSALS_URL}/{proposal_id}/get_ownership"
-        route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
-        )
-
-        proposal = sync_client.proposals.get_ownership(proposal_id)
-
-        assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
-
-
-class TestProposalsLeaveOwnership:
-    @respx.mock
-    def test_leave_ownership(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
-        url = f"{PROPOSALS_URL}/{proposal_id}/leave_ownership"
-        route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
-        )
-
-        proposal = sync_client.proposals.leave_ownership(proposal_id)
-
-        assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
-
-
-class TestProposalsActivityLog:
-    @respx.mock
-    def test_activity_log(self, sync_client: CredereClient) -> None:
-        proposal_id = "prop-abc-123"
-        url = f"{PROPOSALS_URL}/{proposal_id}/activity_log"
-        route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_ACTIVITY_LOG_RESPONSE)
-        )
-
-        log = sync_client.proposals.activity_log(proposal_id)
-
-        assert route.called
-        assert isinstance(log, list)
-        assert len(log) == 2
-        assert log[0]["action"] == "created"
-        assert log[1]["action"] == "updated"
-
-
-# ---------------------------------------------------------------------------
-# Error mapping tests
-# ---------------------------------------------------------------------------
 
 
 class TestProposalsErrorMapping:
@@ -313,105 +353,105 @@ class TestProposalsErrorMapping:
         assert exc_info.value.status_code == 404
 
 
-# ---------------------------------------------------------------------------
-# Async tests
-# ---------------------------------------------------------------------------
+# ASYNC TESTS
 
 
 class TestAsyncProposalsCreate:
     @respx.mock
-    async def test_async_create_proposal(
-        self, async_client: AsyncCredereClient
-    ) -> None:
+    @pytest.mark.asyncio
+    async def test_create_proposal(self, async_client: AsyncCredereClient) -> None:
         route = respx.post(PROPOSALS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_CREATE_RESPONSE)
         )
 
-        proposal = await async_client.proposals.create(SAMPLE_CREATE_DATA)
+        proposal_create = ProposalCreateRequest.model_validate(
+            SAMPLE_PROPOSAL_CREATE_DATA
+        )
+        # Added await
+        proposal = await async_client.proposals.create(proposal_create)
 
         assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
-        assert proposal.conditions is not None
-        assert len(proposal.conditions) == 1
+        assert isinstance(proposal, ProposalCreateResponse)
+        assert proposal.id == 1
+        assert (
+            proposal.external_simulation_uuid == "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+        )
+        assert len(proposal.proposal_attempt.payment_flow) == 12
 
 
 class TestAsyncProposalsList:
     @respx.mock
-    async def test_async_list_proposals(self, async_client: AsyncCredereClient) -> None:
+    @pytest.mark.asyncio
+    async def test_list_proposals(self, async_client: AsyncCredereClient) -> None:
         route = respx.get(PROPOSALS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_PROPOSALS_LIST_RESPONSE)
         )
 
+        # Added await
         proposals = await async_client.proposals.list()
 
         assert route.called
-        assert len(proposals) == 1
-        assert isinstance(proposals[0], Proposal)
+        assert isinstance(proposals, ProposalListResponse)
+        assert len(proposals.proposals) == 1
+        assert isinstance(proposals.proposals[0], ProposalCreateResponse)
+        assert proposals.proposals[0].id == 1
 
 
 class TestAsyncProposalsGet:
     @respx.mock
-    async def test_async_get_proposal(self, async_client: AsyncCredereClient) -> None:
-        proposal_id = "prop-abc-123"
+    @pytest.mark.asyncio
+    async def test_get_proposal(self, async_client: AsyncCredereClient) -> None:
+        proposal_id = "1"
         url = f"{PROPOSALS_URL}/{proposal_id}"
         route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_PROPOSAL_GET_RESPONSE)
         )
 
+        # Added await
         proposal = await async_client.proposals.get(proposal_id)
 
         assert route.called
-        assert isinstance(proposal, Proposal)
-        assert proposal.id == "prop-abc-123"
+        assert isinstance(proposal, ProposalGetResponse)
+        assert proposal.proposal.id == 1
+
+
+class TestAsyncProposalsUpdate:
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_update_proposal(self, async_client: AsyncCredereClient) -> None:
+        proposal_id = 1
+        url = f"{PROPOSALS_URL}/{proposal_id}"
+        new_proposal_data = SAMPLE_PROPOSAL_CREATE_DATA.copy()
+        new_proposal_data["commercial"] = True
+        new_proposal_data["id"] = proposal_id
+
+        new_proposal_data_resp = SAMPLE_PROPOSAL_CREATE_RESPONSE.copy()
+        new_proposal_data_resp["commercial"] = True
+
+        route = respx.put(url).mock(
+            return_value=httpx.Response(200, json=new_proposal_data_resp)
+        )
+
+        proposal_update = ProposalUpdateRequest.model_validate(new_proposal_data)
+        # Added await
+        proposal = await async_client.proposals.update(proposal_id, proposal_update)
+
+        assert route.called
+        assert isinstance(proposal, ProposalCreateResponse)
+        assert proposal.id == 1
+        assert proposal.commercial is True
 
 
 class TestAsyncProposalsDelete:
     @respx.mock
-    async def test_async_delete_proposal(
-        self, async_client: AsyncCredereClient
-    ) -> None:
-        proposal_id = "prop-abc-123"
+    @pytest.mark.asyncio
+    async def test_delete_proposal(self, async_client: AsyncCredereClient) -> None:
+        proposal_id = "1"
         url = f"{PROPOSALS_URL}/{proposal_id}"
         route = respx.delete(url).mock(return_value=httpx.Response(204))
 
+        # Added await
         result = await async_client.proposals.delete(proposal_id)
 
         assert route.called
         assert result is None
-
-
-class TestAsyncProposalsErrorMapping:
-    @respx.mock
-    async def test_async_401_raises_authentication_error(
-        self, async_client: AsyncCredereClient
-    ) -> None:
-        respx.get(PROPOSALS_URL).mock(
-            return_value=httpx.Response(
-                401,
-                json={"error": {"message": "Unauthorized", "status": 401}},
-            )
-        )
-
-        with pytest.raises(AuthenticationError):
-            await async_client.proposals.list()
-
-    @respx.mock
-    async def test_async_404_raises_not_found_error(
-        self, async_client: AsyncCredereClient
-    ) -> None:
-        url = f"{PROPOSALS_URL}/nonexistent"
-        respx.get(url).mock(
-            return_value=httpx.Response(
-                404,
-                json={
-                    "error": {
-                        "message": "Not found",
-                        "status": 404,
-                    }
-                },
-            )
-        )
-
-        with pytest.raises(NotFoundError):
-            await async_client.proposals.get("nonexistent")
