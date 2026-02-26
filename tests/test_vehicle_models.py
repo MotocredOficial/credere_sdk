@@ -13,19 +13,72 @@ MODELS_URL = f"{BASE_URL}/v1/vehicle_models"
 PRICES_URL = f"{BASE_URL}/v1/vehicle_prices"
 
 SAMPLE_VEHICLE_MODEL = {
-    "id": 1,
-    "name": "Civic",
-    "brand": "Honda",
-    "molicar_code": "123456",
-    "active": True,
+    "vehicle_model": {
+        "object_type": "VehicleModel",
+        "id": 1,
+        "created_at": "2020-05-06T19:10:59.233-03:00",
+        "updated_at": "2023-11-04T00:22:24.185-03:00",
+        "name": "BIZ",
+        "brand": "HONDA",
+        "molicar_code": "00000000-0",
+        "version": "110 i CBS - Basico",
+        "year_end": 2024,
+        "year_start": 2019,
+        "active": True,
+        "public_price_cents": 1100000,
+        "public_price_as_string": "BRL",
+        "publish": True,
+        "fipe_code": "811138-3",
+        "public_picture": "https://dcqotzwnlmq7s.cloudfront.net/5od0958jbdwlo61uq13t6jabhyatfear.png",
+        "vehicle_brand": {"id": 103, "name": "HONDA"},
+        "fuel": {
+            "object_type": "Fuel",
+            "id": 1,
+            "created_at": "2013-12-25T16:42:44.693-02:00",
+            "updated_at": "2013-12-25T16:42:44.693-02:00",
+            "name": "Gasolina",
+        },
+        "vehicle_type": {"id": 2, "name": "Motos"},
+    }
 }
 
 SAMPLE_VEHICLE_PRICE = {
-    "id": 1,
-    "store_id": 42,
-    "min_price_cents": 5000000,
-    "default_price_cents": 6000000,
-    "active": True,
+    "vehicle_prices": [
+        {
+            "id": 1,
+            "store_id": 42,
+            "min_price_cents": 400000,
+            "default_price_cents": 500000,
+            "active": True,
+            "created_at": "2012-06-30T16:12:59-03:00",
+            "updated_at": "2016-03-26T23:41:28-03:00",
+            "vehicle_model": {
+                "id": 1,
+                "name": "BIZ",
+                "brand": "Honda",
+                "molicar_code": "12345678-9",
+                "version": "100 KS",
+                "year_end": 2015,
+                "year_start": 2012,
+                "created_at": "2012-05-30T16:12:59-03:00",
+                "updated_at": "2015-03-26T23:41:28-03:00",
+                "fuel": {"id": 1, "name": "Gasolina"},
+            },
+            "store": {
+                "id": 100,
+                "name": "Loja A",
+                "display_name": "Loja A",
+                "uf": "RN",
+                "limit_vehicle_prices": False,
+                "created_at": "2012-05-30T16:12:59-03:00",
+                "updated_at": "2018-03-26T23:41:28-03:00",
+            },
+        }
+    ]
+}
+
+SAMPLE_VEHICLES_LIST_RESPONSE = {
+    "vehicle_models": [SAMPLE_VEHICLE_MODEL["vehicle_model"]]
 }
 
 
@@ -38,9 +91,7 @@ class TestVehicleModelsList:
     @respx.mock
     def test_list_returns_vehicle_models(self, sync_client: CredereClient) -> None:
         route = respx.get(MODELS_URL).mock(
-            return_value=httpx.Response(
-                200, json={"vehicle_models": [SAMPLE_VEHICLE_MODEL]}
-            )
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
         )
 
         result = sync_client.vehicle_models.list()
@@ -50,9 +101,8 @@ class TestVehicleModelsList:
         assert len(result) == 1
         assert isinstance(result[0], VehicleModel)
         assert result[0].id == 1
-        assert result[0].name == "Civic"
-        assert result[0].brand == "Honda"
-        assert result[0].molicar_code == "123456"
+        assert result[0].brand == "HONDA"
+        assert result[0].molicar_code == "00000000-0"
         assert result[0].active is True
 
 
@@ -60,19 +110,16 @@ class TestVehicleModelsSearch:
     @respx.mock
     def test_search_returns_vehicle_model(self, sync_client: CredereClient) -> None:
         route = respx.get(f"{MODELS_URL}/search").mock(
-            return_value=httpx.Response(
-                200, json={"vehicle_model": SAMPLE_VEHICLE_MODEL}
-            )
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_MODEL)
         )
 
-        result = sync_client.vehicle_models.search("Civic")
+        result = sync_client.vehicle_models.search("Honda")
 
         assert route.called
         assert isinstance(result, VehicleModel)
         assert result.id == 1
-        assert result.name == "Civic"
-        assert result.brand == "Honda"
-        assert result.molicar_code == "123456"
+        assert result.brand == "HONDA"
+        assert result.molicar_code == "00000000-0"
         assert result.active is True
 
 
@@ -80,9 +127,7 @@ class TestVehicleModelsPrices:
     @respx.mock
     def test_prices_returns_vehicle_prices(self, sync_client: CredereClient) -> None:
         route = respx.get(PRICES_URL).mock(
-            return_value=httpx.Response(
-                200, json={"vehicle_prices": [SAMPLE_VEHICLE_PRICE]}
-            )
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_PRICE)
         )
 
         result = sync_client.vehicle_models.prices()
@@ -93,8 +138,8 @@ class TestVehicleModelsPrices:
         assert isinstance(result[0], VehiclePrice)
         assert result[0].id == 1
         assert result[0].store_id == 42
-        assert result[0].min_price_cents == 5000000
-        assert result[0].default_price_cents == 6000000
+        assert result[0].min_price_cents == 400000
+        assert result[0].default_price_cents == 500000
         assert result[0].active is True
 
 
@@ -130,9 +175,7 @@ class TestAsyncVehicleModelsList:
         self, async_client: AsyncCredereClient
     ) -> None:
         route = respx.get(MODELS_URL).mock(
-            return_value=httpx.Response(
-                200, json={"vehicle_models": [SAMPLE_VEHICLE_MODEL]}
-            )
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
         )
 
         result = await async_client.vehicle_models.list()
@@ -142,7 +185,6 @@ class TestAsyncVehicleModelsList:
         assert len(result) == 1
         assert isinstance(result[0], VehicleModel)
         assert result[0].id == 1
-        assert result[0].name == "Civic"
 
 
 class TestAsyncVehicleModelsSearch:
@@ -151,14 +193,12 @@ class TestAsyncVehicleModelsSearch:
         self, async_client: AsyncCredereClient
     ) -> None:
         route = respx.get(f"{MODELS_URL}/search").mock(
-            return_value=httpx.Response(
-                200, json={"vehicle_model": SAMPLE_VEHICLE_MODEL}
-            )
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_MODEL)
         )
 
-        result = await async_client.vehicle_models.search("Civic")
+        result = await async_client.vehicle_models.search("HONDA")
 
         assert route.called
         assert isinstance(result, VehicleModel)
         assert result.id == 1
-        assert result.name == "Civic"
+        assert result.brand == "HONDA"

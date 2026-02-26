@@ -6,9 +6,9 @@ import httpx
 
 from credere._response import handle_request_error, raise_for_status
 from credere.models.proposal_attempts import (
-    ProposalAttemptCreateRequest,
+    ProposalAttemptData,
+    ProposalAttemptResponse,
 )
-from credere.models.proposals import ProposalAttemptResponse
 
 
 def _base_path(proposal_id: str) -> str:
@@ -31,7 +31,7 @@ class ProposalAttempts:
     def create(
         self,
         proposal_id: str,
-        data: ProposalAttemptCreateRequest,
+        data: ProposalAttemptData,
         *,
         store_id: int | None = None,
     ) -> ProposalAttemptResponse:
@@ -126,7 +126,7 @@ class AsyncProposalAttempts:
     async def create(
         self,
         proposal_id: str,
-        data: ProposalAttemptCreateRequest,
+        data: ProposalAttemptData,
         *,
         store_id: int | None = None,
     ) -> ProposalAttemptResponse:
@@ -203,4 +203,3 @@ class AsyncProposalAttempts:
             raise
         raise_for_status(response)
         return ProposalAttemptResponse.model_validate(response.json())
-

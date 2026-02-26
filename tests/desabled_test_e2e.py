@@ -7,28 +7,9 @@ import respx
 
 from credere.client import AsyncCredereClient, CredereClient
 from credere.models.bank_credentials import IntegratedBank
-from credere.models.customers import Customer, CustomerCreateRequest
-from credere.models.leads import Lead, LeadCreateRequest, LeadRequiredFields
 from credere.models.plus_returns import (
     PlusReturnRule,
     PlusReturnRuleCreateRequest,
-)
-from credere.models.proposal_attempts import (
-    ProposalAttempt,
-    ProposalAttemptCreateRequest,
-)
-from credere.models.proposals import (
-    Proposal,
-    ProposalConditionRequest,
-    ProposalCreateRequest,
-    ProposalVehicleRequest,
-)
-from credere.models.simulations import (
-    Bank,
-    Simulation,
-    SimulationConditionRequest,
-    SimulationCreateRequest,
-    SimulationVehicleRequest,
 )
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 from credere.models.stores import Store, StoreCreateRequest

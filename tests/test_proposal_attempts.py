@@ -7,9 +7,9 @@ import respx
 from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.proposal_attempts import (
-    ProposalAttemptCreateRequest,
+    ProposalAttemptData,
+    ProposalAttemptResponse,
 )
-from credere.models.proposals import ProposalAttemptResponse
 
 BASE_URL = "https://api.credere.com"
 PROPOSAL_ID = 1
@@ -150,9 +150,7 @@ SAMPLE_ATTEMPT_GET_RESPONSE = SAMPLE_ATTEMPT_CREATE_RESPONSE
 class TestProposalAttemptsCreate:
     @respx.mock
     def test_create_proposal_attempt(self, sync_client: CredereClient) -> None:
-        proposal_attempt = ProposalAttemptCreateRequest.model_validate(
-            SAMPLE_CREATE_REQUEST
-        )
+        proposal_attempt = ProposalAttemptData.model_validate(SAMPLE_CREATE_REQUEST)
         route = respx.post(ATTEMPTS_URL).mock(
             return_value=httpx.Response(200, json=SAMPLE_ATTEMPT_CREATE_RESPONSE)
         )
@@ -262,9 +260,7 @@ class TestAsyncProposalAttemptsCreate:
     async def test_create_proposal_attempt(
         self, async_client: AsyncCredereClient
     ) -> None:
-        proposal_attempt = ProposalAttemptCreateRequest.model_validate(
-            SAMPLE_CREATE_REQUEST
-        )
+        proposal_attempt = ProposalAttemptData.model_validate(SAMPLE_CREATE_REQUEST)
         route = respx.post(ATTEMPTS_URL).mock(
             return_value=httpx.Response(200, json=SAMPLE_ATTEMPT_CREATE_RESPONSE)
         )

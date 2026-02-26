@@ -12,13 +12,9 @@ class ProposalAttemptRequest(BaseModel):
     external_simulation_uuid: str
 
 
-class ProposalAttemptCreateRequest(BaseModel):
+class ProposalAttemptData(BaseModel):
     proposal_id: int
     proposal_attempt: ProposalAttemptRequest
-
-
-class ProposalAttemptUpdateRequest(ProposalAttemptCreateRequest):
-    pass
 
 
 class Bank(BaseModel):
