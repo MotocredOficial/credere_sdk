@@ -7,7 +7,7 @@ from enum import StrEnum
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.customers import Customer, CustomerCreateRequest
+from credere.models.customers import CustomerData, CustomerResponse
 
 _BASE_PATH = "/v1/customers"
 
@@ -34,29 +34,33 @@ class Customers:
 
     def create(
         self,
-        data: CustomerCreateRequest,
+        data: CustomerData,
+        bank_list: list[str],
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = self._client.post(
                 _BASE_PATH,
-                json={"customer": data.model_dump(exclude_none=True)},
+                json={
+                    "bank_validations": {"bank_codes": bank_list},
+                    "customer": data.model_dump(exclude_none=True),
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
     def update(
         self,
         id: int,
-        data: CustomerCreateRequest,
+        data: CustomerData,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = self._client.patch(
                 f"{_BASE_PATH}/{id}",
@@ -67,7 +71,7 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
     def list(
         self,
@@ -77,8 +81,8 @@ class Customers:
         page: int | None = None,
         cpf_cnpj: int | None = None,
         name: str | None = None,
-        sort: SortOption | None = None
-    ) -> list[Customer]:
+        sort: SortOption | None = None,
+    ) -> list[CustomerResponse]:
         params = {}
         if per_page is not None:
             params["per_page"] = per_page
@@ -92,22 +96,23 @@ class Customers:
             params["sort"] = sort
         try:
             response = self._client.get(
-                _BASE_PATH,
-                headers=self._headers(store_id),
-                params=params or None
+                _BASE_PATH, headers=self._headers(store_id), params=params or None
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Customer.model_validate(item) for item in response.json()["customers"]]
+        return [
+            CustomerResponse.model_validate(item)
+            for item in response.json()["customers"]
+        ]
 
     def get(
         self,
         id: int,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{id}",
@@ -117,7 +122,7 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
     def find(
         self,
@@ -126,7 +131,7 @@ class Customers:
         cpf_cnpj: str | None = None,
         cpf: str | None = None,
         cnpj: str | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         params = {}
         if cpf_cnpj:
             params["cpf_cnpj"] = cpf_cnpj
@@ -144,7 +149,7 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
 
 class AsyncCustomers:
@@ -162,29 +167,33 @@ class AsyncCustomers:
 
     async def create(
         self,
-        data: CustomerCreateRequest,
+        data: CustomerData,
+        bank_list: list[str],
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = await self._client.post(
                 _BASE_PATH,
-                json={"customer": data.model_dump(exclude_none=True)},
+                json={
+                    "bank_validations": {"bank_codes": bank_list},
+                    "customer": data.model_dump(exclude_none=True),
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
     async def update(
         self,
         id: int,
-        data: CustomerCreateRequest,
+        data: CustomerData,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = await self._client.patch(
                 f"{_BASE_PATH}/{id}",
@@ -195,7 +204,7 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
     async def list(
         self,
@@ -205,8 +214,8 @@ class AsyncCustomers:
         page: int | None = None,
         cpf_cnpj: int | None = None,
         name: str | None = None,
-        sort: SortOption | None = None
-    ) -> list[Customer]:
+        sort: SortOption | None = None,
+    ) -> list[CustomerResponse]:
         params = {}
         if per_page is not None:
             params["per_page"] = per_page
@@ -220,22 +229,23 @@ class AsyncCustomers:
             params["sort"] = sort
         try:
             response = await self._client.get(
-                _BASE_PATH,
-                headers=self._headers(store_id),
-                params=params or None
+                _BASE_PATH, headers=self._headers(store_id), params=params or None
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Customer.model_validate(item) for item in response.json()["customers"]]
+        return [
+            CustomerResponse.model_validate(item)
+            for item in response.json()["customers"]
+        ]
 
     async def get(
         self,
         id: int,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{id}",
@@ -245,7 +255,7 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])
 
     async def find(
         self,
@@ -254,7 +264,7 @@ class AsyncCustomers:
         cpf_cnpj: str | None = None,
         cpf: str | None = None,
         cnpj: str | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         params = {}
         if cpf_cnpj:
             params["cpf_cnpj"] = cpf_cnpj
@@ -272,4 +282,4 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        return CustomerResponse.model_validate(response.json()["customer"])

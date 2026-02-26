@@ -1,12 +1,6 @@
 """Pydantic models for the Credere SDK."""
 
 from credere.models.bank_credentials import IntegratedBank
-from credere.models.customers import (
-    Customer,
-    CustomerAddress,
-    CustomerAddressRequest,
-    CustomerCreateRequest,
-)
 from credere.models.leads import (
     Address,
     DomainValue,
@@ -40,10 +34,6 @@ from credere.models.vehicle_models import (
 __all__ = [
     "Address",
     "Bank",
-    "Customer",
-    "CustomerAddress",
-    "CustomerAddressRequest",
-    "CustomerCreateRequest",
     "Domain",
     "DomainValue",
     "IntegratedBank",
