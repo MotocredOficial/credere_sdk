@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.simulations import Simulation, SimulationCreateRequest
+from credere.models.simulations import SimulationData, SimulationResponse
 
 _BASE_PATH = "/v1/banks_api/simulations"
 _LIST_PATH = "/v1/proposal_simulations"
@@ -26,10 +26,10 @@ class Simulations:
 
     def create(
         self,
-        data: SimulationCreateRequest,
+        data: SimulationData,
         *,
         store_id: int | None = None,
-    ) -> Simulation:
+    ) -> SimulationResponse:
         try:
             response = self._client.post(
                 _BASE_PATH,
@@ -40,9 +40,13 @@ class Simulations:
             handle_request_error(exc)
             raise  # unreachable, satisfies type checker
         raise_for_status(response)
-        return Simulation.model_validate(response.json()["data"])
+        payload = response.json()["data"]
+        return SimulationResponse(
+            simulation_id=payload["uuid"],
+            raw_response=payload,
+        )
 
-    def list(self, *, store_id: int | None = None) -> list[Simulation]:
+    def list(self, *, store_id: int | None = None) -> list[SimulationResponse]:
         try:
             response = self._client.get(
                 _LIST_PATH,
@@ -52,14 +56,20 @@ class Simulations:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Simulation.model_validate(item) for item in response.json()["data"]]
+        return [
+            SimulationResponse(
+                simulation_id=item["uuid"],
+                raw_response=item,
+            )
+            for item in response.json()["data"]
+        ]
 
     def get(
         self,
         uuid: str,
         *,
         store_id: int | None = None,
-    ) -> Simulation:
+    ) -> SimulationResponse:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{uuid}",
@@ -69,7 +79,11 @@ class Simulations:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Simulation.model_validate(response.json()["data"])
+        payload = response.json()["data"]
+        return SimulationResponse(
+            simulation_id=payload["uuid"],
+            raw_response=payload,
+        )
 
 
 class AsyncSimulations:
@@ -87,10 +101,10 @@ class AsyncSimulations:
 
     async def create(
         self,
-        data: SimulationCreateRequest,
+        data: SimulationData,
         *,
         store_id: int | None = None,
-    ) -> Simulation:
+    ) -> SimulationResponse:
         try:
             response = await self._client.post(
                 _BASE_PATH,
@@ -101,9 +115,13 @@ class AsyncSimulations:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Simulation.model_validate(response.json()["data"])
+        payload = response.json()["data"]
+        return SimulationResponse(
+            simulation_id=payload["uuid"],
+            raw_response=payload,
+        )
 
-    async def list(self, *, store_id: int | None = None) -> list[Simulation]:
+    async def list(self, *, store_id: int | None = None) -> list[SimulationResponse]:
         try:
             response = await self._client.get(
                 _LIST_PATH,
@@ -113,14 +131,20 @@ class AsyncSimulations:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Simulation.model_validate(item) for item in response.json()["data"]]
+        return [
+            SimulationResponse(
+                simulation_id=item["uuid"],
+                raw_response=item,
+            )
+            for item in response.json()["data"]
+        ]
 
     async def get(
         self,
         uuid: str,
         *,
         store_id: int | None = None,
-    ) -> Simulation:
+    ) -> SimulationResponse:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{uuid}",
@@ -130,4 +154,8 @@ class AsyncSimulations:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Simulation.model_validate(response.json()["data"])
+        payload = response.json()["data"]
+        return SimulationResponse(
+            simulation_id=payload["uuid"],
+            raw_response=payload,
+        )
