@@ -141,3 +141,4 @@ class CustomerResponse(BaseModel):
     id: int
     name: str
     cpf: str
+    raw_response: dict

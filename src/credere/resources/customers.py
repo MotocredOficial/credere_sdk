@@ -52,7 +52,14 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     def update(
         self,
@@ -71,7 +78,15 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     def list(
         self,
@@ -103,7 +118,13 @@ class Customers:
             raise
         raise_for_status(response)
         return [
-            CustomerResponse.model_validate(item)
+            CustomerResponse(
+                object_type=item["object_type"],
+                id=item["id"],
+                name=item["name"],
+                cpf=item["cpf"],
+                raw_response=item,
+            )
             for item in response.json()["customers"]
         ]
 
@@ -122,7 +143,14 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
 
     def find(
         self,
@@ -149,7 +177,14 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
 
 
 class AsyncCustomers:
@@ -185,7 +220,14 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     async def update(
         self,
@@ -204,7 +246,14 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     async def list(
         self,
@@ -236,7 +285,13 @@ class AsyncCustomers:
             raise
         raise_for_status(response)
         return [
-            CustomerResponse.model_validate(item)
+            CustomerResponse(
+                object_type=item["object_type"],
+                id=item["id"],
+                name=item["name"],
+                cpf=item["cpf"],
+                raw_response=item,
+            )
             for item in response.json()["customers"]
         ]
 
@@ -255,7 +310,14 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
 
     async def find(
         self,
@@ -282,4 +344,11 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return CustomerResponse.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
