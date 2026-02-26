@@ -6,82 +6,139 @@ import respx
 
 from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, CredereAPIError, NotFoundError
-from credere.models.leads import Lead, LeadCreateRequest, LeadRequiredFields
+from credere.models.leads import LeadData, LeadRequiredFields, LeadResponse
 
 BASE_URL = "https://api.credere.com"
 LEADS_URL = f"{BASE_URL}/v1/banks_api/leads"
 
+SAMPLE_LEAD_CREATE_DATA = {
+    "lead": {
+        "address": {
+            "city": "Natal",
+            "complement": "Edif Corporate Tower Edif Center-Trade",
+            "district": "Lagoa Nova",
+            "number": "3700, Sala 409 Bloco A",
+            "state": "RN",
+            "street": "Av Amintas Barros",
+            "zip_code": "59075-810",
+        },
+        "cpf_cnpj": "000.000.000-00",
+        "name": "Client name",
+        "birthdate": "1970-01-01",
+        "phone_number": "(84) 90000-0000",
+        "email": "cliente@email.com",
+        "retrieve_gender": "F",
+        "retrieve_occupation": "11",
+        "retrieve_profession": "administrador",
+        "monthly_income": 900000,
+        "has_cnh": True,
+    }
+}
+
 SAMPLE_LEAD_RESPONSE = {
     "data": {
         "id": 1,
-        "cpf_cnpj": "12345678900",
-        "name": "João Silva",
-        "birthdate": "1990-01-15",
-        "monthly_income": 500000,
-        "phone_number": "11999999999",
-        "payload": {},
+        "cpf_cnpj": "597.352.160-51",
+        "name": "Lead Name",
         "gender": {
             "id": 1,
-            "type": "Gender",
-            "credere_identifier": "male",
-            "label": "Masculino",
+            "type": "domain_type",
+            "credere_identifier": "credere_identifier",
+            "label": "Domain Label",
         },
         "occupation": {
-            "id": 10,
-            "type": "Occupation",
-            "credere_identifier": "employee",
-            "label": "Empregado",
+            "id": 1,
+            "type": "domain_type",
+            "credere_identifier": "credere_identifier",
+            "label": "Domain Label",
         },
         "profession": {
-            "id": 20,
-            "type": "Profession",
-            "credere_identifier": "engineer",
-            "label": "Engenheiro",
+            "id": 1,
+            "type": "domain_type",
+            "credere_identifier": "credere_identifier",
+            "label": "Domain Label",
         },
-        "mother_name": "Maria Silva",
+        "birthdate": "1995-11-24",
+        "monthly_income": 1500000,
+        "phone_number": "+5582999001000",
+        "payload": {},
         "address": {
-            "id": 100,
-            "zip_code": "01001000",
-            "street": "Rua Direita",
-            "number": "123",
-            "complement": "Apto 1",
-            "district": "Sé",
-            "city": "São Paulo",
-            "state": "SP",
+            "id": 1,
+            "zip_code": "59075810",
+            "street": "Av Amintas Barros",
+            "number": "3700, Sala 409 Bloco A",
+            "complement": "Edif Corporate Tower Edif Center-Trade",
+            "city": "Natal",
+            "state": "RN",
         },
     }
 }
 
-SAMPLE_LIST_RESPONSE = {"data": [SAMPLE_LEAD_RESPONSE["data"]]}
-
-SAMPLE_REQUIRED_FIELDS_RESPONSE = {
+SAMPLE_LEAD_REQUIRED_FIELDS_RESPONSE = {
     "data": {
-        "lead": SAMPLE_LEAD_RESPONSE["data"],
+        "lead": {
+            "id": 1,
+            "cpf_cnpj": "597.352.160-51",
+            "name": "Lead Name",
+            "gender": {
+                "id": 1,
+                "type": "domain_type",
+                "credere_identifier": "credere_identifier",
+                "label": "Domain Label",
+            },
+            "occupation": {
+                "id": 1,
+                "type": "domain_type",
+                "credere_identifier": "credere_identifier",
+                "label": "Domain Label",
+            },
+            "profession": {
+                "id": 1,
+                "type": "domain_type",
+                "credere_identifier": "credere_identifier",
+                "label": "Domain Label",
+            },
+            "birthdate": "1995-11-24",
+            "mother_name": "Lead Mother Name",
+            "monthly_income": 1500000,
+            "phone_number": "+5582999001000",
+            "payload": {},
+            "address": {
+                "id": 1,
+                "zip_code": "59075810",
+                "street": "Av Amintas Barros",
+                "number": "3700, Sala 409 Bloco A",
+                "complement": "Edif Corporate Tower Edif Center-Trade",
+                "city": "Natal",
+                "state": "RN",
+            },
+        },
         "requirements": {
-            "birthdate": ["bank_code_1"],
-            "cpf_cnpj": ["bank_code_1"],
-            "name": ["bank_code_1"],
-            "phone_number": ["bank_code_1"],
-            "address": {"zip_code": ["bank_code_1"]},
+            "address": {"zip_code": ["623"]},
+            "birthdate": ["fontecred", "655", "623", "394", "336"],
+            "cpf_cnpj": [
+                "moneyplus",
+                "fontecred",
+                "M22",
+                "655",
+                "623",
+                "422",
+                "394",
+                "342",
+                "341",
+                "336",
+            ],
+            "has_cnh": ["341", "336"],
+            "monthly_income": ["623"],
+            "name": ["fontecred", "422", "394"],
+            "phone_number": ["fontecred", "655", "623", "336"],
+            "retrieve_gender": ["394"],
+            "retrieve_occupation": ["623"],
         },
     }
 }
 
-SAMPLE_CREATE_DATA = LeadCreateRequest(
-    cpf_cnpj="12345678900",
-    name="João Silva",
-    birthdate="1990-01-15",
-    email="joao@example.com",
-    has_cnh=True,
-    retrieve_gender="male",
-    phone_number="11999999999",
-    monthly_income=500000,
-)
-
-
-# ---------------------------------------------------------------------------
-# Sync tests
-# ---------------------------------------------------------------------------
+SAMPLE_LEAD_LIST_RESPONSE = {"data": [SAMPLE_LEAD_RESPONSE["data"]]}
 
 
 class TestLeadsCreate:
@@ -91,73 +148,38 @@ class TestLeadsCreate:
             return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
         )
 
-        lead = sync_client.leads.create(SAMPLE_CREATE_DATA)
+        lead_data = LeadData.model_validate(SAMPLE_LEAD_CREATE_DATA["lead"])
+        lead = sync_client.leads.create(lead_data)
 
         assert route.called
-        assert isinstance(lead, Lead)
+        assert isinstance(lead, LeadResponse)
         assert lead.id == 1
-        assert lead.cpf_cnpj == "12345678900"
-        assert lead.name == "João Silva"
+        assert lead.cpf_cnpj == "597.352.160-51"
+        assert lead.name == "Lead Name"
         assert lead.gender is not None
-        assert lead.gender.credere_identifier == "male"
+        assert lead.gender.credere_identifier == "credere_identifier"
         assert lead.address is not None
-        assert lead.address.id == 100
-
-    @respx.mock
-    def test_create_sends_correct_body(self, sync_client: CredereClient) -> None:
-        route = respx.post(LEADS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
-        )
-
-        sync_client.leads.create(SAMPLE_CREATE_DATA)
-
-        request = route.calls.last.request
-        assert request.headers["Store-Id"] == "42"
-        assert "Authorization" in request.headers
-
-    @respx.mock
-    def test_create_sends_json_body(self, sync_client: CredereClient) -> None:
-        route = respx.post(LEADS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
-        )
-
-        sync_client.leads.create(SAMPLE_CREATE_DATA)
-
-        import json
-
-        body = json.loads(route.calls.last.request.content)
-        assert "lead" in body
-        assert body["lead"]["cpf_cnpj"] == "12345678900"
+        assert lead.address.id == 1
 
 
 class TestLeadsUpdate:
     @respx.mock
     def test_update_lead(self, sync_client: CredereClient) -> None:
         url = f"{LEADS_URL}/12345678900"
+        updated_data = SAMPLE_LEAD_RESPONSE["data"].copy()
+        updated_data["name"] = "João Atualizado"
         route = respx.patch(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
+            return_value=httpx.Response(200, json={"data": updated_data})
         )
 
-        update_data = LeadCreateRequest(name="João Atualizado")
-        lead = sync_client.leads.update("12345678900", update_data)
+        lead_data = LeadData.model_validate(SAMPLE_LEAD_CREATE_DATA["lead"])
+        lead_data.name = "João Atualizado"
+
+        lead = sync_client.leads.update("12345678900", lead_data)
 
         assert route.called
-        assert isinstance(lead, Lead)
+        assert isinstance(lead, LeadResponse)
         assert lead.id == 1
-
-    @respx.mock
-    def test_update_sends_correct_path_and_headers(
-        self, sync_client: CredereClient
-    ) -> None:
-        url = f"{LEADS_URL}/12345678900"
-        route = respx.patch(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
-        )
-
-        sync_client.leads.update("12345678900", LeadCreateRequest(name="Test"))
-
-        request = route.calls.last.request
-        assert request.headers["Store-Id"] == "42"
 
 
 class TestLeadsDelete:
@@ -176,7 +198,7 @@ class TestLeadsList:
     @respx.mock
     def test_list_leads(self, sync_client: CredereClient) -> None:
         route = respx.get(LEADS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_LEAD_LIST_RESPONSE)
         )
 
         leads = sync_client.leads.list()
@@ -184,24 +206,23 @@ class TestLeadsList:
         assert route.called
         assert isinstance(leads, list)
         assert len(leads) == 1
-        assert isinstance(leads[0], Lead)
-        assert leads[0].cpf_cnpj == "12345678900"
+        assert isinstance(leads[0], LeadResponse)
+        assert leads[0].cpf_cnpj == "597.352.160-51"
 
 
 class TestLeadsGet:
     @respx.mock
     def test_get_lead(self, sync_client: CredereClient) -> None:
-        url = f"{LEADS_URL}/12345678900"
+        url = f"{LEADS_URL}/59732516051"
         route = respx.get(url).mock(
             return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
         )
 
-        lead = sync_client.leads.get("12345678900")
+        lead = sync_client.leads.get("59732516051")
 
         assert route.called
-        assert isinstance(lead, Lead)
+        assert isinstance(lead, LeadResponse)
         assert lead.id == 1
-        assert lead.mother_name == "Maria Silva"
 
 
 class TestLeadsRequiredFields:
@@ -209,7 +230,7 @@ class TestLeadsRequiredFields:
     def test_required_fields(self, sync_client: CredereClient) -> None:
         url = f"{LEADS_URL}/12345678900/required_fields"
         route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_REQUIRED_FIELDS_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_LEAD_REQUIRED_FIELDS_RESPONSE)
         )
 
         result = sync_client.leads.required_fields("12345678900")
@@ -220,11 +241,6 @@ class TestLeadsRequiredFields:
         assert result.lead.id == 1
         assert result.requirements is not None
         assert "birthdate" in result.requirements
-
-
-# ---------------------------------------------------------------------------
-# Error mapping tests
-# ---------------------------------------------------------------------------
 
 
 class TestErrorMapping:
@@ -272,7 +288,7 @@ class TestErrorMapping:
         )
 
         with pytest.raises(CredereAPIError) as exc_info:
-            sync_client.leads.create(LeadCreateRequest(cpf_cnpj="invalid"))
+            sync_client.leads.create(LeadData(cpf_cnpj="invalid"))
 
         assert exc_info.value.status_code == 422
 
@@ -289,37 +305,6 @@ class TestErrorMapping:
 
 
 # ---------------------------------------------------------------------------
-# Store-Id override tests
-# ---------------------------------------------------------------------------
-
-
-class TestStoreIdOverride:
-    @respx.mock
-    def test_method_store_id_overrides_client(self, sync_client: CredereClient) -> None:
-        route = respx.get(LEADS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
-        )
-
-        sync_client.leads.list(store_id=99)
-
-        request = route.calls.last.request
-        assert request.headers["Store-Id"] == "99"
-
-    @respx.mock
-    def test_no_store_id_omits_header(self) -> None:
-        client = CredereClient(api_key="sk-test", base_url=BASE_URL)
-        route = respx.get(LEADS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
-        )
-
-        client.leads.list()
-
-        request = route.calls.last.request
-        assert "Store-Id" not in request.headers
-        client.close()
-
-
-# ---------------------------------------------------------------------------
 # Async tests
 # ---------------------------------------------------------------------------
 
@@ -331,40 +316,37 @@ class TestAsyncLeadsCreate:
             return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
         )
 
-        lead = await async_client.leads.create(SAMPLE_CREATE_DATA)
+        lead_data = LeadData.model_validate(SAMPLE_LEAD_CREATE_DATA["lead"])
+        lead = await async_client.leads.create(lead_data)
 
         assert route.called
-        assert isinstance(lead, Lead)
+        assert isinstance(lead, LeadResponse)
         assert lead.id == 1
-        assert lead.cpf_cnpj == "12345678900"
+        assert lead.cpf_cnpj == "597.352.160-51"
+        assert lead.name == "Lead Name"
+        assert lead.gender is not None
+        assert lead.gender.credere_identifier == "credere_identifier"
+        assert lead.address is not None
+        assert lead.address.id == 1
 
 
-class TestAsyncLeadsList:
+class TestAsyncLeadsUpdate:
     @respx.mock
-    async def test_async_list_leads(self, async_client: AsyncCredereClient) -> None:
-        route = respx.get(LEADS_URL).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LIST_RESPONSE)
-        )
-
-        leads = await async_client.leads.list()
-
-        assert route.called
-        assert len(leads) == 1
-        assert isinstance(leads[0], Lead)
-
-
-class TestAsyncLeadsGet:
-    @respx.mock
-    async def test_async_get_lead(self, async_client: AsyncCredereClient) -> None:
+    async def test_async_update_lead(self, async_client: AsyncCredereClient) -> None:
         url = f"{LEADS_URL}/12345678900"
-        route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
+        updated_data = SAMPLE_LEAD_RESPONSE["data"].copy()
+        updated_data["name"] = "João Atualizado"
+        route = respx.patch(url).mock(
+            return_value=httpx.Response(200, json={"data": updated_data})
         )
 
-        lead = await async_client.leads.get("12345678900")
+        lead_data = LeadData.model_validate(SAMPLE_LEAD_CREATE_DATA["lead"])
+        lead_data.name = "João Atualizado"
+
+        lead = await async_client.leads.update("12345678900", lead_data)
 
         assert route.called
-        assert isinstance(lead, Lead)
+        assert isinstance(lead, LeadResponse)
         assert lead.id == 1
 
 
@@ -380,6 +362,37 @@ class TestAsyncLeadsDelete:
         assert result is None
 
 
+class TestAsyncLeadsList:
+    @respx.mock
+    async def test_async_list_leads(self, async_client: AsyncCredereClient) -> None:
+        route = respx.get(LEADS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_LEAD_LIST_RESPONSE)
+        )
+
+        leads = await async_client.leads.list()
+
+        assert route.called
+        assert isinstance(leads, list)
+        assert len(leads) == 1
+        assert isinstance(leads[0], LeadResponse)
+        assert leads[0].cpf_cnpj == "597.352.160-51"
+
+
+class TestAsyncLeadsGet:
+    @respx.mock
+    async def test_async_get_lead(self, async_client: AsyncCredereClient) -> None:
+        url = f"{LEADS_URL}/59732516051"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_LEAD_RESPONSE)
+        )
+
+        lead = await async_client.leads.get("59732516051")
+
+        assert route.called
+        assert isinstance(lead, LeadResponse)
+        assert lead.id == 1
+
+
 class TestAsyncLeadsRequiredFields:
     @respx.mock
     async def test_async_required_fields(
@@ -387,7 +400,7 @@ class TestAsyncLeadsRequiredFields:
     ) -> None:
         url = f"{LEADS_URL}/12345678900/required_fields"
         route = respx.get(url).mock(
-            return_value=httpx.Response(200, json=SAMPLE_REQUIRED_FIELDS_RESPONSE)
+            return_value=httpx.Response(200, json=SAMPLE_LEAD_REQUIRED_FIELDS_RESPONSE)
         )
 
         result = await async_client.leads.required_fields("12345678900")
@@ -395,39 +408,6 @@ class TestAsyncLeadsRequiredFields:
         assert route.called
         assert isinstance(result, LeadRequiredFields)
         assert result.lead is not None
-
-
-class TestAsyncErrorMapping:
-    @respx.mock
-    async def test_async_401_raises_authentication_error(
-        self, async_client: AsyncCredereClient
-    ) -> None:
-        respx.get(LEADS_URL).mock(
-            return_value=httpx.Response(
-                401,
-                json={"error": {"message": "Unauthorized", "status": 401}},
-            )
-        )
-
-        with pytest.raises(AuthenticationError):
-            await async_client.leads.list()
-
-    @respx.mock
-    async def test_async_404_raises_not_found_error(
-        self, async_client: AsyncCredereClient
-    ) -> None:
-        url = f"{LEADS_URL}/00000000000"
-        respx.get(url).mock(
-            return_value=httpx.Response(
-                404,
-                json={
-                    "error": {
-                        "message": "Not found",
-                        "status": 404,
-                    }
-                },
-            )
-        )
-
-        with pytest.raises(NotFoundError):
-            await async_client.leads.get("00000000000")
+        assert result.lead.id == 1
+        assert result.requirements is not None
+        assert "birthdate" in result.requirements

@@ -2,7 +2,6 @@
 
 from credere.resources.bank_credentials import AsyncBankCredentials, BankCredentials
 from credere.resources.customers import AsyncCustomers, Customers
-from credere.resources.leads import AsyncLeads, Leads
 from credere.resources.plus_returns import AsyncPlusReturns, PlusReturns
 from credere.resources.simulations import AsyncSimulations, Simulations
 from credere.resources.stock import AsyncStock, Stock
@@ -14,7 +13,6 @@ from credere.resources.vehicle_models import AsyncVehicleModels, VehicleModels
 __all__ = [
     "AsyncBankCredentials",
     "AsyncCustomers",
-    "AsyncLeads",
     "AsyncPlusReturns",
     "AsyncSimulations",
     "AsyncStock",
@@ -24,7 +22,6 @@ __all__ = [
     "AsyncVehicleModels",
     "BankCredentials",
     "Customers",
-    "Leads",
     "PlusReturns",
     "Simulations",
     "Stock",

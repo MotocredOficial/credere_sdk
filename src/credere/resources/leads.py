@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.leads import Lead, LeadCreateRequest, LeadRequiredFields
+from credere.models.leads import LeadData, LeadRequiredFields, LeadResponse
 
 _BASE_PATH = "/v1/banks_api/leads"
 
@@ -25,10 +25,10 @@ class Leads:
 
     def create(
         self,
-        data: LeadCreateRequest,
+        data: LeadData,
         *,
         store_id: int | None = None,
-    ) -> Lead:
+    ) -> LeadResponse:
         try:
             response = self._client.post(
                 _BASE_PATH,
@@ -39,15 +39,15 @@ class Leads:
             handle_request_error(exc)
             raise  # unreachable, satisfies type checker
         raise_for_status(response)
-        return Lead.model_validate(response.json()["data"])
+        return LeadResponse.model_validate(response.json()["data"])
 
     def update(
         self,
         cpf_cnpj: str,
-        data: LeadCreateRequest,
+        data: LeadData,
         *,
         store_id: int | None = None,
-    ) -> Lead:
+    ) -> LeadResponse:
         try:
             response = self._client.patch(
                 f"{_BASE_PATH}/{cpf_cnpj}",
@@ -58,7 +58,7 @@ class Leads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Lead.model_validate(response.json()["data"])
+        return LeadResponse.model_validate(response.json()["data"])
 
     def delete(
         self,
@@ -76,7 +76,7 @@ class Leads:
             raise
         raise_for_status(response)
 
-    def list(self, *, store_id: int | None = None) -> list[Lead]:
+    def list(self, *, store_id: int | None = None) -> list[LeadResponse]:
         try:
             response = self._client.get(
                 _BASE_PATH,
@@ -86,14 +86,14 @@ class Leads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Lead.model_validate(item) for item in response.json()["data"]]
+        return [LeadResponse.model_validate(item) for item in response.json()["data"]]
 
     def get(
         self,
         cpf_cnpj: str,
         *,
         store_id: int | None = None,
-    ) -> Lead:
+    ) -> LeadResponse:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{cpf_cnpj}",
@@ -103,7 +103,7 @@ class Leads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Lead.model_validate(response.json()["data"])
+        return LeadResponse.model_validate(response.json()["data"])
 
     def required_fields(
         self,
@@ -138,10 +138,10 @@ class AsyncLeads:
 
     async def create(
         self,
-        data: LeadCreateRequest,
+        data: LeadData,
         *,
         store_id: int | None = None,
-    ) -> Lead:
+    ) -> LeadResponse:
         try:
             response = await self._client.post(
                 _BASE_PATH,
@@ -152,15 +152,15 @@ class AsyncLeads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Lead.model_validate(response.json()["data"])
+        return LeadResponse.model_validate(response.json()["data"])
 
     async def update(
         self,
         cpf_cnpj: str,
-        data: LeadCreateRequest,
+        data: LeadData,
         *,
         store_id: int | None = None,
-    ) -> Lead:
+    ) -> LeadResponse:
         try:
             response = await self._client.patch(
                 f"{_BASE_PATH}/{cpf_cnpj}",
@@ -171,7 +171,7 @@ class AsyncLeads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Lead.model_validate(response.json()["data"])
+        return LeadResponse.model_validate(response.json()["data"])
 
     async def delete(
         self,
@@ -189,7 +189,7 @@ class AsyncLeads:
             raise
         raise_for_status(response)
 
-    async def list(self, *, store_id: int | None = None) -> list[Lead]:
+    async def list(self, *, store_id: int | None = None) -> list[LeadResponse]:
         try:
             response = await self._client.get(
                 _BASE_PATH,
@@ -199,14 +199,14 @@ class AsyncLeads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Lead.model_validate(item) for item in response.json()["data"]]
+        return [LeadResponse.model_validate(item) for item in response.json()["data"]]
 
     async def get(
         self,
         cpf_cnpj: str,
         *,
         store_id: int | None = None,
-    ) -> Lead:
+    ) -> LeadResponse:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{cpf_cnpj}",
@@ -216,7 +216,7 @@ class AsyncLeads:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Lead.model_validate(response.json()["data"])
+        return LeadResponse.model_validate(response.json()["data"])
 
     async def required_fields(
         self,

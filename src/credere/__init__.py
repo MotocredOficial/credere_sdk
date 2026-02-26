@@ -9,14 +9,6 @@ from credere.exceptions import (
     CredereTimeoutError,
     NotFoundError,
 )
-from credere.models.leads import (
-    Address,
-    DomainValue,
-    Lead,
-    LeadAddress,
-    LeadCreateRequest,
-    LeadRequiredFields,
-)
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
 from credere.models.simulations import (
     Bank,
@@ -52,10 +44,6 @@ __all__ = [
     "Domain",
     "DomainValue",
     "IntegratedBank",
-    "Lead",
-    "LeadAddress",
-    "LeadCreateRequest",
-    "LeadRequiredFields",
     "NotFoundError",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
