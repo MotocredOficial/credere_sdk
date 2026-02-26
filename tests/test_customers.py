@@ -872,6 +872,7 @@ class TestAsyncCustomersGet:
         assert customer.name == "Nome do cliente"
 
 
+
 class TestAsyncCustomersFind:
     @pytest.mark.asyncio
     @respx.mock
