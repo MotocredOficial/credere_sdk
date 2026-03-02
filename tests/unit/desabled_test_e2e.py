@@ -4,6 +4,7 @@ import json
 
 import httpx
 import respx
+from credere.models.utilities import Domain
 
 from credere.client import AsyncCredereClient, CredereClient
 from credere.models.bank_credentials import IntegratedBank
@@ -14,14 +15,13 @@ from credere.models.plus_returns import (
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 from credere.models.stores import Store, StoreCreateRequest
 from credere.models.users import User
-from credere.models.utilities import Domain
 from credere.models.vehicle_models import VehicleModel, VehiclePrice
 
 # ---------------------------------------------------------------------------
 # Shared constants
 # ---------------------------------------------------------------------------
 
-BASE_URL = "https://api.credere.com"
+BASE_URL = "https://app.meucredere.com.br"
 STORE_ID = 1
 CUSTOMER_ID = 10
 LEAD_CPF = "12345678900"

@@ -11,9 +11,9 @@ from credere.models.proposal_attempts import (
     ProposalAttemptResponse,
 )
 
-BASE_URL = "https://api.credere.com"
+BASE_URL = "https://app.meucredere.com.br"
 PROPOSAL_ID = 1
-ATTEMPTS_URL = f"{BASE_URL}/v1/proposals/{PROPOSAL_ID}/proposal_attempts"
+ATTEMPTS_URL = f"{BASE_URL}/api/v1/proposals/{PROPOSAL_ID}/proposal_attempts"
 
 SAMPLE_CREATE_REQUEST = {
     "proposal_id": 1,

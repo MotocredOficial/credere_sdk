@@ -7,9 +7,9 @@ from enum import StrEnum
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.customers import CustomerData, CustomerResponse
+from credere.models.customers import CustomerData, CustomerResponse, Domain
 
-_BASE_PATH = "/v1/customers"
+_BASE_PATH = "api/v1/customers"
 
 
 class SortOption(StrEnum):
@@ -186,6 +186,28 @@ class Customers:
             raw_response=payload,
         )
 
+    def domains(
+        self,
+        *,
+        types: list[str] | None = None,
+    ) -> dict[str, list[Domain]]:
+        params = {}
+        if types is not None:
+            params["types"] = ",".join(types)
+        try:
+            response = self._client.get(
+                _BASE_PATH.replace("customers", "domains"),
+                params=params or None,
+            )
+        except httpx.HTTPError as exc:
+            handle_request_error(exc)
+            raise
+        raise_for_status(response)
+        return {
+            key: [Domain.model_validate(item) for item in value]
+            for key, value in response.json()["domains"].items()
+        }
+
 
 class AsyncCustomers:
     """Asynchronous customers resource."""
@@ -352,3 +374,25 @@ class AsyncCustomers:
             object_type=payload["object_type"],
             raw_response=payload,
         )
+
+    async def domains(
+        self,
+        *,
+        types: list[str] | None = None,
+    ) -> dict[str, list[Domain]]:
+        params = {}
+        if types is not None:
+            params["types"] = ",".join(types)
+        try:
+            response = await self._client.get(
+                _BASE_PATH.replace("customers", "domains"),
+                params=params or None,
+            )
+        except httpx.HTTPError as exc:
+            handle_request_error(exc)
+            raise
+        raise_for_status(response)
+        return {
+            key: [Domain.model_validate(item) for item in value]
+            for key, value in response.json()["domains"].items()
+        }

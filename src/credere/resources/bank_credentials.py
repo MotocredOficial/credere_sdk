@@ -29,7 +29,7 @@ class BankCredentials:
     ) -> dict[str, Any]:
         try:
             response = self._client.get(
-                f"/v1/stores/{store_id}/persist_cnpj_bank_credentials",
+                f"/api/v1/stores/{store_id}/persist_cnpj_bank_credentials",
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
@@ -44,7 +44,7 @@ class BankCredentials:
     ) -> list[IntegratedBank]:
         try:
             response = self._client.get(
-                f"/v1/stores/{store_id}/integrated_banks",
+                f"/api/v1/stores/{store_id}/integrated_banks",
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
@@ -76,7 +76,7 @@ class AsyncBankCredentials:
     ) -> dict[str, Any]:
         try:
             response = await self._client.get(
-                f"/v1/stores/{store_id}/persist_cnpj_bank_credentials",
+                f"/api/v1/stores/{store_id}/persist_cnpj_bank_credentials",
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
@@ -91,7 +91,7 @@ class AsyncBankCredentials:
     ) -> list[IntegratedBank]:
         try:
             response = await self._client.get(
-                f"/v1/stores/{store_id}/integrated_banks",
+                f"/api/v1/stores/{store_id}/integrated_banks",
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:

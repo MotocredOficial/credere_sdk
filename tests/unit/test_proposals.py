@@ -9,8 +9,8 @@ from credere.models.proposals import (
     ProposalResponse,
 )
 
-BASE_URL = "https://api.credere.com"
-PROPOSALS_URL = f"{BASE_URL}/v1/proposals"
+BASE_URL = "https://app.meucredere.com.br"
+PROPOSALS_URL = f"{BASE_URL}/api/v1/proposals"
 
 SAMPLE_PROPOSAL_CREATE_DATA = {
     "proposal": {

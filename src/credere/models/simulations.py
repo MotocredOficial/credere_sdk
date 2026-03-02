@@ -19,7 +19,7 @@ class ProductsOptions(BaseModel):
 
 
 class Vehicle(BaseModel):
-    credere_vehicle_model_id: str | None = None
+    vehicle_molicar_code: str
     licensing_uf: str | None = None
     licensing_city: str | None = None
     manufacture_year: int | None = None

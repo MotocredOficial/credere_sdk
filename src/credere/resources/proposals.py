@@ -10,7 +10,7 @@ from credere.models.proposals import (
     ProposalResponse,
 )
 
-_BASE_PATH = "/v1/proposals"
+_BASE_PATH = "api/v1/proposals"
 
 
 class Proposals:

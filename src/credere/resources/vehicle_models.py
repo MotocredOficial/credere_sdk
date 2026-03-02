@@ -9,8 +9,8 @@ import httpx
 from credere._response import handle_request_error, raise_for_status
 from credere.models.vehicle_models import VehicleModel, VehiclePrice
 
-_MODELS_PATH = "/v1/vehicle_models"
-_PRICES_PATH = "/v1/vehicle_prices"
+_MODELS_PATH = "api/v1/vehicle_models"
+_PRICES_PATH = "api/v1/vehicle_prices"
 
 
 class VehicleModels:

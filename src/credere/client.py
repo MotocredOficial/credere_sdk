@@ -17,7 +17,7 @@ from credere.resources.stores import AsyncStores, Stores
 from credere.resources.users import AsyncUsers, Users
 from credere.resources.vehicle_models import AsyncVehicleModels, VehicleModels
 
-_DEFAULT_BASE_URL = "https://api.credere.com"
+_DEFAULT_BASE_URL = "https://app.meucredere.com.br"
 _DEFAULT_TIMEOUT = 30.0
 
 

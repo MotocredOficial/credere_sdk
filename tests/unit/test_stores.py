@@ -8,8 +8,8 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.stores import Store, StoreCreateRequest
 
-BASE_URL = "https://api.credere.com"
-STORES_URL = f"{BASE_URL}/v1/stores"
+BASE_URL = "https://app.meucredere.com.br"
+STORES_URL = f"{BASE_URL}/api/v1/stores"
 
 SAMPLE_STORE_RESPONSE = {
     "store": {

@@ -5,9 +5,9 @@ from __future__ import annotations
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.leads import LeadData, LeadRequiredFields, LeadResponse
+from credere.models.leads import DomainValue, LeadData, LeadRequiredFields, LeadResponse
 
-_BASE_PATH = "/v1/banks_api/leads"
+_BASE_PATH = "/api/v1/banks_api/leads"
 
 
 class Leads:
@@ -20,7 +20,10 @@ class Leads:
     def _headers(self, store_id: int | None = None) -> dict[str, str]:
         sid = store_id if store_id is not None else self._store_id
         if sid is not None:
-            return {"Store-Id": str(sid)}
+            return {
+                "Store-Id": str(sid),
+                "Accept": "application/json",
+            }
         return {}
 
     def create(
@@ -121,6 +124,29 @@ class Leads:
             raise
         raise_for_status(response)
         return LeadRequiredFields.model_validate(response.json()["data"])
+
+    def domains(
+        self,
+        *,
+        types: list[str] | None = None,
+    ) -> dict[str, list[DomainValue]]:
+        params = {}
+        if types:
+            params["types"] = ",".join(types)
+        try:
+            response = self._client.get(
+                _BASE_PATH.replace("leads", "domains"),
+                params=params or None,
+                headers=self._headers(),
+            )
+        except httpx.HTTPError as exc:
+            handle_request_error(exc)
+            raise
+        raise_for_status(response)
+        return {
+            key: [DomainValue.model_validate(item) for item in values]
+            for key, values in response.json()["data"].items()
+        }
 
 
 class AsyncLeads:
@@ -234,3 +260,26 @@ class AsyncLeads:
             raise
         raise_for_status(response)
         return LeadRequiredFields.model_validate(response.json()["data"])
+
+    async def domains(
+        self,
+        *,
+        types: list[str] | None = None,
+    ) -> dict[str, list[DomainValue]]:
+        params = {}
+        if types:
+            params["types"] = ",".join(types)
+        try:
+            response = await self._client.get(
+                _BASE_PATH.replace("leads", "domains"),
+                params=params or None,
+                headers=self._headers(),
+            )
+        except httpx.HTTPError as exc:
+            handle_request_error(exc)
+            raise
+        raise_for_status(response)
+        return {
+            key: [DomainValue.model_validate(item) for item in values]
+            for key, values in response.json()["data"].items()
+        }

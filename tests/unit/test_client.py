@@ -6,7 +6,7 @@ import respx
 from credere.client import AsyncCredereClient, CredereClient
 
 API_KEY = "sk-test-key"
-BASE_URL = "https://api.credere.com"
+BASE_URL = "https://app.meucredere.com.br"
 
 
 class TestCredereClient:

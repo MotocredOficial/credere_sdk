@@ -5,6 +5,12 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
+class Domain(BaseModel):
+    id: int | str | None = None
+    name: str | None = None
+    identifier: str | None = None
+
+
 class BankValidations(BaseModel):
     bank_codes: list[str] | None = None
     store_id: int | None = None
@@ -97,7 +103,7 @@ class CustomerData(BaseModel):
     address: Address | None = None
     has_made_funding: bool | None = None
     previous_funding_bank_id: int | None = None
-    accept_boleto: bool | None = None
+    accept_boleto: bool = False
     note: str | None = None
     emails: list[Email] | None = None
     phones: list[Phone] | None = None
@@ -124,7 +130,7 @@ class CustomerData(BaseModel):
     genre_id: int | None = None
     education_id: int | None = None
     property: int | None = None
-    public_person: bool | None = None
+    public_person: bool = False
     job_reference: JobReference | None = None
     have_credit_card: bool | None = None
     credit_cards: str | None = None

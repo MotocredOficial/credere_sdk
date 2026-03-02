@@ -8,8 +8,8 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.customers import CustomerData, CustomerResponse
 
-BASE_URL = "https://api.credere.com"
-CUSTOMERS_URL = f"{BASE_URL}/v1/customers"
+BASE_URL = "https://app.meucredere.com.br"
+CUSTOMERS_URL = f"{BASE_URL}/api/v1/customers"
 
 SAMPLE_CUSTOMER_CREATE_DATA = {
     "bank_validations": {
@@ -870,7 +870,6 @@ class TestAsyncCustomersGet:
         assert isinstance(customer, CustomerResponse)
         assert customer.id == 1
         assert customer.name == "Nome do cliente"
-
 
 
 class TestAsyncCustomersFind:

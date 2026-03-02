@@ -8,8 +8,8 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, CredereAPIError, NotFoundError
 from credere.models.leads import LeadData, LeadRequiredFields, LeadResponse
 
-BASE_URL = "https://api.credere.com"
-LEADS_URL = f"{BASE_URL}/v1/banks_api/leads"
+BASE_URL = "https://app.meucredere.com.br"
+LEADS_URL = f"{BASE_URL}/api/v1/banks_api/leads"
 
 SAMPLE_LEAD_CREATE_DATA = {
     "lead": {

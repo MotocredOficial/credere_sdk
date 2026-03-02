@@ -8,9 +8,9 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError
 from credere.models.vehicle_models import VehicleModel, VehiclePrice
 
-BASE_URL = "https://api.credere.com"
-MODELS_URL = f"{BASE_URL}/v1/vehicle_models"
-PRICES_URL = f"{BASE_URL}/v1/vehicle_prices"
+BASE_URL = "https://app.meucredere.com.br"
+MODELS_URL = f"{BASE_URL}/api/v1/vehicle_models"
+PRICES_URL = f"{BASE_URL}/api/v1/vehicle_prices"
 
 SAMPLE_VEHICLE_MODEL = {
     "vehicle_model": {

@@ -27,7 +27,7 @@ class ProposalData(BaseModel):
     km_mileage: int | None = None
     license_plate_code: str | None = None
     renavam_codes: str | None = None
-    chasse_code: str | None = None
+    chassi_code: str | None = None
     color: str | None = None
     licensing_uf: str | None = None
     licensing_city: str | None = None

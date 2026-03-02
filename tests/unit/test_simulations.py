@@ -8,9 +8,9 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.simulations import SimulationData, SimulationResponse
 
-BASE_URL = "https://api.credere.com"
-SIMULATIONS_URL = f"{BASE_URL}/v1/banks_api/simulations"
-LIST_URL = f"{BASE_URL}/v1/proposal_simulations"
+BASE_URL = "https://app.meucredere.com.br"
+SIMULATIONS_URL = f"{BASE_URL}/api/v1/banks_api/simulations"
+LIST_URL = f"{BASE_URL}/api/v1/proposal_simulations"
 
 SAMPLE_SIMULATION_CREATE_DATA = {
     "simulation": {
@@ -34,7 +34,7 @@ SAMPLE_SIMULATION_CREATE_DATA = {
         "insurance_value": 100000,
         "commercial": False,
         "vehicle": {
-            "credere_vehicle_model_id": "0000",
+            "vehicle_molicar_code": "0000",
             "licensing_uf": "SP",
             "licensing_city": "São Paulo",
             "manufacture_year": 2022,

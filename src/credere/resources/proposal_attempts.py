@@ -12,7 +12,7 @@ from credere.models.proposal_attempts import (
 
 
 def _base_path(proposal_id: str) -> str:
-    return f"/v1/proposals/{proposal_id}/proposal_attempts"
+    return f"/api/v1/proposals/{proposal_id}/proposal_attempts"
 
 
 class ProposalAttempts:

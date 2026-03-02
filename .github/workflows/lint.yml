@@ -25,4 +25,4 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
-      - run: python -m pytest tests/ -v
+      - run: python -m pytest tests/unit/ -v

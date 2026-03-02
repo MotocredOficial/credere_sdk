@@ -8,8 +8,8 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 
-BASE_URL = "https://api.credere.com"
-VEHICLES_URL = f"{BASE_URL}/v1/vehicles"
+BASE_URL = "https://app.meucredere.com.br"
+VEHICLES_URL = f"{BASE_URL}/api/v1/vehicles"
 
 SAMPLE_VEHICLE = {
     "id": 1,

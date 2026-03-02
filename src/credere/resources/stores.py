@@ -9,7 +9,7 @@ import httpx
 from credere._response import handle_request_error, raise_for_status
 from credere.models.stores import Store, StoreCreateRequest
 
-_BASE_PATH = "/v1/stores"
+_BASE_PATH = "/api/v1/stores"
 
 
 class Stores:
