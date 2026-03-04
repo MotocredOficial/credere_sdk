@@ -12,7 +12,13 @@ from credere.models.customers import Domain
 from credere.models.leads import DomainValue
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
 from credere.models.proposals import ProposalAttempt, ProposalData, ProposalResponse
-from credere.models.simulations import Condition, RetrieveLead, SimulationData, SimulationResponse, Vehicle
+from credere.models.simulations import (
+    Condition,
+    RetrieveLead,
+    SimulationData,
+    SimulationResponse,
+    Vehicle,
+)
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 from credere.models.stores import Store, StoreCreateRequest
 from credere.models.users import User, UserAccount, UserRole

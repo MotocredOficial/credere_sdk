@@ -64,7 +64,9 @@ def simulation_data() -> SimulationData:
 async def test_create_simulation(
     async_client: AsyncCredereClient, simulation_data: SimulationData
 ) -> None:
-    simulation = await async_client.simulations.create(simulation_data, store_id=STORE_ID)
+    simulation = await async_client.simulations.create(
+        simulation_data, store_id=STORE_ID
+    )
     assert isinstance(simulation, SimulationResponse)
     assert simulation.simulation_id
     print(f"  [OK] create_simulation — simulation_id={simulation.simulation_id}")
