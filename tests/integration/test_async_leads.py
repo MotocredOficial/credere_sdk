@@ -1,21 +1,15 @@
-"""Integration tests for the Leads resource.
-
-Run directly:
-    python tests/integration/test_leads.py
-"""
+"""Async integration tests for the Leads resource."""
 
 import random
 
 import pytest
 
-from credere.client import CredereClient
+from credere.client import AsyncCredereClient
 from credere.models.leads import Address, LeadData, LeadRequiredFields, LeadResponse
 
 from .config import STORE_ID
 
-# ---------------------------------------------------------------------------
-# Fake data — replace with real values before running
-# ---------------------------------------------------------------------------
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture(scope="module")
@@ -27,10 +21,8 @@ def generated_cpf() -> str:
         return str(remainder if remainder < 10 else 0)
 
     base = [str(random.randint(0, 9)) for _ in range(9)]
-
     first_digit = calc_digit(base)
     second_digit = calc_digit([*base, first_digit])
-
     return "".join([*base, first_digit, second_digit])
 
 
@@ -38,7 +30,7 @@ def generated_cpf() -> str:
 def lead_data(generated_cpf: str) -> LeadData:
     return LeadData(
         cpf_cnpj=generated_cpf,
-        name="sync_client name",
+        name="async client name",
         birthdate="1970-01-01",
         email="cliente@email.com",
         phone_number="(84) 90000-0000",
@@ -59,11 +51,13 @@ def lead_data(generated_cpf: str) -> LeadData:
     )
 
 
-@pytest.fixture(scope="module")
-def created_lead(sync_client: CredereClient, lead_data: LeadData) -> LeadResponse:
-    lead = sync_client.leads.create(lead_data, store_id=STORE_ID)
+@pytest.fixture
+async def created_lead(
+    async_client: AsyncCredereClient, lead_data: LeadData
+) -> LeadResponse:
+    lead = await async_client.leads.create(lead_data, store_id=STORE_ID)
     yield lead
-    sync_client.leads.delete(lead_data.cpf_cnpj, store_id=STORE_ID)
+    await async_client.leads.delete(lead_data.cpf_cnpj, store_id=STORE_ID)
 
 
 # ---------------------------------------------------------------------------
@@ -71,40 +65,46 @@ def created_lead(sync_client: CredereClient, lead_data: LeadData) -> LeadRespons
 # ---------------------------------------------------------------------------
 
 
-def test_create_lead(created_lead: LeadResponse) -> None:
+async def test_create_lead(created_lead: LeadResponse) -> None:
     assert isinstance(created_lead, LeadResponse)
     assert created_lead.cpf_cnpj is not None
 
 
-def test_get_lead(sync_client: CredereClient, created_lead: LeadResponse) -> None:
+async def test_get_lead(
+    async_client: AsyncCredereClient, created_lead: LeadResponse
+) -> None:
     cpf = created_lead.cpf_cnpj
-    lead = sync_client.leads.get(cpf, store_id=STORE_ID)
+    lead = await async_client.leads.get(cpf, store_id=STORE_ID)
     assert isinstance(lead, LeadResponse)
     assert lead.cpf_cnpj is not None
     print(f"  [OK] get_lead — id={lead.id}")
 
 
-def test_list_leads(sync_client: CredereClient, created_lead: LeadResponse) -> None:
-    leads = sync_client.leads.list(store_id=STORE_ID)
+async def test_list_leads(
+    async_client: AsyncCredereClient, created_lead: LeadResponse
+) -> None:
+    leads = await async_client.leads.list(store_id=STORE_ID)
     assert isinstance(leads, list)
     print(f"  [OK] list_leads — {len(leads)} lead(s) returned")
 
 
-def test_update_lead(
-    sync_client: CredereClient, lead_data: LeadData, created_lead: LeadResponse
+async def test_update_lead(
+    async_client: AsyncCredereClient, lead_data: LeadData, created_lead: LeadResponse
 ) -> None:
     cpf = lead_data.cpf_cnpj
     update_data = lead_data.model_copy()
-    update_data.name = "Nome atualizado"
-    lead = sync_client.leads.update(cpf, update_data, store_id=STORE_ID)
+    update_data.name = "Nome atualizado async"
+    lead = await async_client.leads.update(cpf, update_data, store_id=STORE_ID)
     assert isinstance(lead, LeadResponse)
-    assert lead.name == "Nome atualizado"
+    assert lead.name == "Nome atualizado async"
     print(f"  [OK] update_lead — id={lead.id}")
 
 
-def test_required_fields(sync_client: CredereClient, lead_data: LeadData) -> None:
+async def test_required_fields(
+    async_client: AsyncCredereClient, lead_data: LeadData
+) -> None:
     cpf = lead_data.cpf_cnpj
-    result = sync_client.leads.required_fields(cpf, store_id=STORE_ID)
+    result = await async_client.leads.required_fields(cpf, store_id=STORE_ID)
     assert isinstance(result, LeadRequiredFields)
     print(
         f"""
@@ -114,8 +114,8 @@ def test_required_fields(sync_client: CredereClient, lead_data: LeadData) -> Non
     )
 
 
-def test_domains(sync_client: CredereClient) -> None:
-    result = sync_client.leads.domains()
+async def test_domains(async_client: AsyncCredereClient) -> None:
+    result = await async_client.leads.domains()
     assert isinstance(result, dict)
     print(
         f"""

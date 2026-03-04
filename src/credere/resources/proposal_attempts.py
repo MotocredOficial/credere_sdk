@@ -45,8 +45,9 @@ class ProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttemptResponse.model_validate(
-            response.json()["proposal_attempt"]
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
         )
 
     def list(
@@ -65,7 +66,9 @@ class ProposalAttempts:
             raise
         raise_for_status(response)
         return [
-            ProposalAttemptResponse.model_validate(item)
+            ProposalAttemptResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
             for item in response.json()["proposal_attempts"]
         ]
 
@@ -85,8 +88,9 @@ class ProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttemptResponse.model_validate(
-            response.json()["proposal_attempt"]
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
         )
 
     def update(
@@ -107,7 +111,10 @@ class ProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttemptResponse.model_validate(response.json())
+        payload = response.json()
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
 
 class AsyncProposalAttempts:
@@ -140,8 +147,9 @@ class AsyncProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttemptResponse.model_validate(
-            response.json()["proposal_attempt"]
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
         )
 
     async def list(
@@ -160,7 +168,9 @@ class AsyncProposalAttempts:
             raise
         raise_for_status(response)
         return [
-            ProposalAttemptResponse.model_validate(item)
+            ProposalAttemptResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
             for item in response.json()["proposal_attempts"]
         ]
 
@@ -180,8 +190,9 @@ class AsyncProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttemptResponse.model_validate(
-            response.json()["proposal_attempt"]
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
         )
 
     async def update(
@@ -202,4 +213,7 @@ class AsyncProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttemptResponse.model_validate(response.json())
+        payload = response.json()
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )

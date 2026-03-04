@@ -199,8 +199,10 @@ class TestProposalAttemptsUpdate:
         url = f"{ATTEMPTS_URL}/1"
         proposal_attempt_updated = SAMPLE_PROPOSAL_ATTEMPT_RESPONSE.copy()
         proposal_attempt_updated["obs"] = "Updated observation"
-        proposal_attemped_updated_cls = ProposalAttemptResponse.model_validate(
-            proposal_attempt_updated
+        proposal_attemped_updated_cls = ProposalAttemptResponse(
+            object_type=proposal_attempt_updated["object_type"],
+            id=proposal_attempt_updated["id"],
+            raw_response=proposal_attempt_updated,
         )
         route = respx.put(url).mock(
             return_value=httpx.Response(200, json=proposal_attempt_updated)
@@ -213,7 +215,7 @@ class TestProposalAttemptsUpdate:
         assert route.called
         assert isinstance(result, ProposalAttemptResponse)
         assert result.id == 1
-        assert result.obs == "Updated observation"
+        assert result.raw_response["obs"] == "Updated observation"
 
 
 class TestErrorMapping:
@@ -318,8 +320,10 @@ class TestAsyncProposalAttemptsUpdate:
         url = f"{ATTEMPTS_URL}/1"
         proposal_attempt_updated = SAMPLE_PROPOSAL_ATTEMPT_RESPONSE.copy()
         proposal_attempt_updated["obs"] = "Updated observation"
-        proposal_attemped_updated_cls = ProposalAttemptResponse.model_validate(
-            proposal_attempt_updated
+        proposal_attemped_updated_cls = ProposalAttemptResponse(
+            object_type=proposal_attempt_updated["object_type"],
+            id=proposal_attempt_updated["id"],
+            raw_response=proposal_attempt_updated,
         )
         route = respx.put(url).mock(
             return_value=httpx.Response(200, json=proposal_attempt_updated)
@@ -332,7 +336,7 @@ class TestAsyncProposalAttemptsUpdate:
         assert route.called
         assert isinstance(result, ProposalAttemptResponse)
         assert result.id == 1
-        assert result.obs == "Updated observation"
+        assert result.raw_response["obs"] == "Updated observation"
 
 
 class TestAsyncErrorMapping:

@@ -18,7 +18,7 @@ SAMPLE_PROPOSAL_CREATE_DATA = {
         "store_id": 1,
         "seller_id": 1,
         "commercial": False,
-        "proposal_attempts": [
+        "proposal_attemps": [
             {
                 "simulation_condition_id": 1,
                 "external_simulation_uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
@@ -207,9 +207,10 @@ class TestProposalsCreate:
         assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
         assert (
-            proposal.external_simulation_uuid == "42c2e9f5-a422-4d45-b2ab-180694d63f3c"
+            proposal.raw_response["external_simulation_uuid"]
+            == "42c2e9f5-a422-4d45-b2ab-180694d63f3c"
         )
-        assert len(proposal.proposal_attempt.payment_flow) == 12
+        assert len(proposal.raw_response["proposal_attempt"]["payment_flow"]) == 12
 
 
 class TestProposalsList:
@@ -267,7 +268,7 @@ class TestProposalsUpdate:
         assert route.called
         assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
-        assert proposal.commercial is True
+        assert proposal.raw_response["commercial"] is True
 
 
 class TestProposalsDelete:
@@ -340,9 +341,10 @@ class TestAsyncProposalsCreate:
         assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
         assert (
-            proposal.external_simulation_uuid == "42c2e9f5-a422-4d45-b2ab-180694d63f3c"
+            proposal.raw_response["external_simulation_uuid"]
+            == "42c2e9f5-a422-4d45-b2ab-180694d63f3c"
         )
-        assert len(proposal.proposal_attempt.payment_flow) == 12
+        assert len(proposal.raw_response["proposal_attempt"]["payment_flow"]) == 12
 
 
 class TestAsyncProposalsList:
@@ -406,7 +408,7 @@ class TestAsyncProposalsUpdate:
         assert route.called
         assert isinstance(proposal, ProposalResponse)
         assert proposal.id == 1
-        assert proposal.commercial is True
+        assert proposal.raw_response["commercial"] is True
 
 
 class TestAsyncProposalsDelete:

@@ -1,14 +1,11 @@
-"""Integration tests for the Proposal Attempts resource.
+"""Async integration tests for the Proposal Attempts resource.
 
 Requires an existing proposal. Set PROPOSAL_ID and SIMULATION_* constants below.
-
-Run directly:
-    python tests/integration/test_proposal_attempts.py
 """
 
 import pytest
 
-from credere.client import CredereClient
+from credere.client import AsyncCredereClient
 from credere.models.proposal_attempts import (
     ProposalAttemptData,
     ProposalAttemptRequest,
@@ -18,14 +15,18 @@ from credere.models.proposals import ProposalAttempt, ProposalData, ProposalResp
 
 from .config import STORE_ID
 
-CUSTOMER_ID = 2472825  # Existing customer id
-SELLER_ID = 42102  # real seller id from the reference JSON
-SIMULATION_CONDITION_ID = 368339483  # from a real simulation condition
-SIMULATION_UUID = "1a887757-d67c-4d96-8bd2-f41756e46c56"  # from a real simulation
+CUSTOMER_ID = 2472825
+SELLER_ID = 42102
+SIMULATION_CONDITION_ID = 368339483
+SIMULATION_UUID = "1a887757-d67c-4d96-8bd2-f41756e46c56"
+
+pytestmark = pytest.mark.asyncio
 
 
-@pytest.fixture(scope="module")
-def created_proposal_for_attempt(sync_client: CredereClient) -> ProposalResponse:
+@pytest.fixture
+async def created_proposal_for_attempt(
+    async_client: AsyncCredereClient,
+) -> ProposalResponse:
     proposal_data = ProposalData(
         customer_id=CUSTOMER_ID,
         store_id=STORE_ID,
@@ -45,14 +46,15 @@ def created_proposal_for_attempt(sync_client: CredereClient) -> ProposalResponse
         ],
     )
 
-    proposal = sync_client.proposals.create(proposal_data, store_id=STORE_ID)
+    proposal = await async_client.proposals.create(proposal_data, store_id=STORE_ID)
     yield proposal
-    sync_client.proposals.delete(proposal.id, store_id=STORE_ID)
+    await async_client.proposals.delete(proposal.id, store_id=STORE_ID)
 
 
 @pytest.fixture
-def created_proposal_attempt(
-    sync_client: CredereClient, created_proposal_for_attempt: ProposalResponse
+async def created_proposal_attempt(
+    async_client: AsyncCredereClient,
+    created_proposal_for_attempt: ProposalResponse,
 ) -> ProposalAttemptResponse:
     proposal_attempt_data = ProposalAttemptData(
         proposal_id=created_proposal_for_attempt.id,
@@ -62,9 +64,11 @@ def created_proposal_attempt(
         ),
     )
 
-    return sync_client.proposal_attempts.create(
+    attemp = await async_client.proposal_attempts.create(
         created_proposal_for_attempt.id, proposal_attempt_data, store_id=STORE_ID
     )
+
+    yield attemp
 
 
 # ---------------------------------------------------------------------------
@@ -72,8 +76,7 @@ def created_proposal_attempt(
 # ---------------------------------------------------------------------------
 
 
-def test_create_proposal_attempt(
-    sync_client: CredereClient,
+async def test_create_proposal_attempt(
     created_proposal_attempt: ProposalAttemptResponse,
 ) -> None:
     assert isinstance(created_proposal_attempt, ProposalAttemptResponse)
@@ -81,14 +84,14 @@ def test_create_proposal_attempt(
     print(f"  [OK] create_proposal_attempt — id={created_proposal_attempt.id}")
 
 
-def test_get_proposal_attempt(
-    sync_client: CredereClient,
+async def test_get_proposal_attempt(
+    async_client: AsyncCredereClient,
     created_proposal_attempt: ProposalAttemptResponse,
     created_proposal_for_attempt: ProposalResponse,
 ) -> None:
     proposal_id = created_proposal_for_attempt.id
     proposal_attempt_id = created_proposal_attempt.id
-    attempt = sync_client.proposal_attempts.get(
+    attempt = await async_client.proposal_attempts.get(
         proposal_id, proposal_attempt_id, store_id=STORE_ID
     )
     assert isinstance(attempt, ProposalAttemptResponse)
@@ -96,10 +99,11 @@ def test_get_proposal_attempt(
     print(f"  [OK] get_proposal_attempt — id={attempt.id}")
 
 
-def test_list_proposal_attempts(
-    sync_client: CredereClient, created_proposal_for_attempt: ProposalResponse
+async def test_list_proposal_attempts(
+    async_client: AsyncCredereClient,
+    created_proposal_for_attempt: ProposalResponse,
 ) -> None:
     proposal_id = created_proposal_for_attempt.id
-    attempts = sync_client.proposal_attempts.list(proposal_id, store_id=STORE_ID)
+    attempts = await async_client.proposal_attempts.list(proposal_id, store_id=STORE_ID)
     assert isinstance(attempts, list)
     print(f"  [OK] list_proposal_attempts — {len(attempts)} attempt(s) returned")

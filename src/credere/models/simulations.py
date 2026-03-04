@@ -5,12 +5,8 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class Bank(BaseModel):  # To avoid breaking other modules for now
-    pass
-
-
 class RetrieveLead(BaseModel):
-    cpf_cnpj: str | None = None
+    cpf_cnpj: str
 
 
 class ProductsOptions(BaseModel):
@@ -29,22 +25,22 @@ class Vehicle(BaseModel):
 
 
 class Condition(BaseModel):
-    installments: int | None = None
-    down_payment: int | None = None
+    installments: int
+    down_payment: int
     bank_febraban_code: str | None = None
     products_options: ProductsOptions | None = None
     include_financial_protection_insurance: bool | None = None
     process_credere_suggested_conditions: bool | None = None
-    max_return: str | None = None
-    min_return: str | None = None
+    max_return: int | None = None
+    min_return: int | None = None
     return_preference: str | None = None
     quota_preference: str | None = None
 
 
 class SimulationData(BaseModel):
-    process_bank_suggested_conditions: bool | None = None
-    process_credere_suggested_conditions: bool | None = None
-    seller_cpf: str | None = None
+    process_bank_suggested_conditions: bool = True
+    process_credere_suggested_conditions: bool = True
+    seller_cpf: str
     retrieve_lead: RetrieveLead | None = None
     bank_febraban_codes: list[str] | None = None
     documentation_value: int | None = None

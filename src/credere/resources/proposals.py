@@ -42,7 +42,10 @@ class Proposals:
             handle_request_error(exc)
             raise  # unreachable, satisfies type checker
         raise_for_status(response)
-        return ProposalResponse.model_validate(response.json()["complete_proposal"])
+        payload = response.json()["complete_proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def list(self, *, store_id: int | None = None) -> list[ProposalResponse]:
         try:
@@ -55,7 +58,9 @@ class Proposals:
             raise
         raise_for_status(response)
         return [
-            ProposalResponse.model_validate(item)
+            ProposalResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
             for item in response.json()["proposals"]
         ]
 
@@ -74,7 +79,10 @@ class Proposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalResponse.model_validate(response.json()["proposal"])
+        payload = response.json()["proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def update(
         self,
@@ -95,7 +103,10 @@ class Proposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalResponse.model_validate(response.json())
+        payload = response.json()
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def delete(
         self,
@@ -118,7 +129,7 @@ class Proposals:
         id: str,
         *,
         store_id: int | None = None,
-    ) -> list[dict]:
+    ) -> dict[str, list]:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{id}/activity_log",
@@ -160,7 +171,10 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalResponse.model_validate(response.json()["complete_proposal"])
+        payload = response.json()["complete_proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def list(self, *, store_id: int | None = None) -> list[ProposalResponse]:
         try:
@@ -173,7 +187,9 @@ class AsyncProposals:
             raise
         raise_for_status(response)
         return [
-            ProposalResponse.model_validate(item)
+            ProposalResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
             for item in response.json()["proposals"]
         ]
 
@@ -192,7 +208,10 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalResponse.model_validate(response.json()["proposal"])
+        payload = response.json()["proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def update(
         self,
@@ -213,7 +232,10 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalResponse.model_validate(response.json())
+        payload = response.json()
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def delete(
         self,
@@ -236,7 +258,7 @@ class AsyncProposals:
         id: str,
         *,
         store_id: int | None = None,
-    ) -> list[dict]:
+    ) -> dict[str, list]:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{id}/activity_log",

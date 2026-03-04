@@ -65,13 +65,17 @@ class Customers:
         self,
         id: int,
         data: CustomerData,
+        bank_list: list[str],
         *,
         store_id: int | None = None,
     ) -> CustomerResponse:
         try:
             response = self._client.patch(
                 f"{_BASE_PATH}/{id}",
-                json={"customer": data.model_dump(exclude_none=True)},
+                json={
+                    "customer": data.model_dump(exclude_none=True),
+                    "bank_validations": {"bank_codes": bank_list},
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:

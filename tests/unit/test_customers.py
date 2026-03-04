@@ -626,7 +626,9 @@ class TestCustomersCreate:
             return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
         )
 
-        customer_data = CustomerData.model_validate(SAMPLE_CUSTOMER_CREATE_DATA)
+        customer_data = CustomerData.model_validate(
+            SAMPLE_CUSTOMER_CREATE_DATA["customer"]
+        )
         bank_list = ["M123", "M456"]
         customer = sync_client.customers.create(customer_data, bank_list)
 
@@ -647,9 +649,12 @@ class TestCustomersUpdate:
             return_value=httpx.Response(200, json={"customer": updated_data})
         )
 
-        customer_data = CustomerData.model_validate(SAMPLE_CUSTOMER_CREATE_DATA)
+        customer_data = CustomerData.model_validate(
+            SAMPLE_CUSTOMER_CREATE_DATA["customer"]
+        )
+        bank_list = ["M123", "M456"]
         customer_data.name = "Nome do cliente atualizado"
-        customer = sync_client.customers.update(1, customer_data)
+        customer = sync_client.customers.update(1, customer_data, bank_list)
 
         assert route.called
         assert isinstance(customer, CustomerResponse)
@@ -789,7 +794,9 @@ class TestAsyncCustomersCreate:
             return_value=httpx.Response(200, json=SAMPLE_CUSTOMER_RESPONSE)
         )
 
-        customer_data = CustomerData.model_validate(SAMPLE_CUSTOMER_CREATE_DATA)
+        customer_data = CustomerData.model_validate(
+            SAMPLE_CUSTOMER_CREATE_DATA["customer"]
+        )
         bank_list = ["M123", "M456"]
         customer = await async_client.customers.create(customer_data, bank_list)
 
@@ -811,7 +818,9 @@ class TestAsyncCustomersUpdate:
             return_value=httpx.Response(200, json={"customer": updated_data})
         )
 
-        customer_data = CustomerData.model_validate(SAMPLE_CUSTOMER_CREATE_DATA)
+        customer_data = CustomerData.model_validate(
+            SAMPLE_CUSTOMER_CREATE_DATA["customer"]
+        )
         customer_data.name = "Nome do cliente atualizado"
         customer = await async_client.customers.update(1, customer_data)
 

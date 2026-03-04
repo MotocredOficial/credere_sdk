@@ -94,13 +94,13 @@ class PersonalReference(BaseModel):
 
 class CustomerData(BaseModel):
     id: int | None = None
-    cpf: str | None = None
-    name: str | None = None
+    cpf: str
+    name: str
     nickname: str | None = None
-    born_at: str | None = None
+    born_at: str
     have_bank_account: bool | None = None
     accountant: Accountant | None = None
-    address: Address | None = None
+    address: Address
     has_made_funding: bool | None = None
     previous_funding_bank_id: int | None = None
     accept_boleto: bool = False
@@ -110,7 +110,7 @@ class CustomerData(BaseModel):
     bank_references: list[BankReference] | None = None
     addresses: list[Address] | None = None
     attachments: list | None = None
-    mother: str | None = None
+    mother: str
     father: str | None = None
     document_type: str | None = None
     rg: str | None = None
@@ -135,11 +135,6 @@ class CustomerData(BaseModel):
     have_credit_card: bool | None = None
     credit_cards: str | None = None
     personal_references: list[PersonalReference] | None = None
-
-
-class RootModel(BaseModel):
-    bank_validations: BankValidations | None = None
-    customer: CustomerData | None = None
 
 
 class CustomerResponse(BaseModel):

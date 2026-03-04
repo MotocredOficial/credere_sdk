@@ -1,14 +1,10 @@
-"""Integration tests for the Customers resource.
-
-Run directly:
-    python tests/integration/test_customers.py
-"""
+"""Async integration tests for the Customers resource."""
 
 import random
 
 import pytest
 
-from credere.client import CredereClient
+from credere.client import AsyncCredereClient
 from credere.models.customers import (
     Accountant,
     Address,
@@ -21,8 +17,10 @@ from credere.models.customers import (
 
 from .config import EXISTING_CPF, STORE_ID
 
-BANK_LIST = ["623"]  # febraban code from the reference JSON
+BANK_LIST = ["623"]
 CUSTOMER_ID = 2474303  # Already existing customer
+
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture(scope="module")
@@ -34,27 +32,22 @@ def generated_cpf() -> str:
         return str(remainder if remainder < 10 else 0)
 
     base = [str(random.randint(0, 9)) for _ in range(9)]
-
     first_digit = calc_digit(base)
     second_digit = calc_digit([*base, first_digit])
-
     return "".join([*base, first_digit, second_digit])
 
 
 @pytest.fixture(scope="module")
 def customer_data(generated_cpf: str) -> CustomerData:
     return CustomerData(
-        # Identity
         cpf=generated_cpf,
         name="Teste",
         born_at="11/11/1991",
         mother="Testa",
-        # Document
         document_type="RG",
         rg="38.551.225-9",
         rg_issuing="ITEP",
         rg_state_id=2,
-        # Civil / demographic
         marital_status_id=2,
         spouse_name="Testudo",
         spouse_cpf="662.189.990-41",
@@ -63,15 +56,12 @@ def customer_data(generated_cpf: str) -> CustomerData:
         place_of_birth="Maceio",
         state_of_birth_id=2,
         genre_id=2,
-        # Flags
         public_person=False,
-        # Contact
         emails=[Email(address="example@example.com")],
         phones=[
             Phone(code=11, number=999999999, phone_type_id=1),
             Phone(code=11, number=999999992, phone_type_id=2),
         ],
-        # Address
         address=Address(
             address_type_id=1,
             zip_code="59032-445",
@@ -85,7 +75,6 @@ def customer_data(generated_cpf: str) -> CustomerData:
             set_time_month=24,
             set_time_year=2,
         ),
-        # Employment
         job_reference=JobReference(
             professional_ocupation_id=7,
             profession_id=1,
@@ -105,41 +94,43 @@ def customer_data(generated_cpf: str) -> CustomerData:
 # ---------------------------------------------------------------------------
 
 
-def test_create_customer(
-    sync_client: CredereClient, customer_data: CustomerData
+async def test_create_customer(
+    async_client: AsyncCredereClient, customer_data: CustomerData
 ) -> None:
-    customer = sync_client.customers.create(customer_data, BANK_LIST, store_id=STORE_ID)
+    customer = await async_client.customers.create(
+        customer_data, BANK_LIST, store_id=STORE_ID
+    )
     assert isinstance(customer, CustomerResponse)
     assert customer.id
     assert customer.name
     print(f"  [OK] create_customer — id={customer.id}, name={customer.name}")
 
 
-def test_get_customer(sync_client: CredereClient) -> None:
-    customer = sync_client.customers.get(CUSTOMER_ID, store_id=STORE_ID)
+async def test_get_customer(async_client: AsyncCredereClient) -> None:
+    customer = await async_client.customers.get(CUSTOMER_ID, store_id=STORE_ID)
     assert isinstance(customer, CustomerResponse)
     assert customer.id == CUSTOMER_ID
     print(f"  [OK] get_customer — id={customer.id}")
 
 
-def test_find_customer(sync_client: CredereClient, customer_data: CustomerData) -> None:
+async def test_find_customer(async_client: AsyncCredereClient) -> None:
     cpf = (
         f"{EXISTING_CPF[:3]}.{EXISTING_CPF[3:6]}.{EXISTING_CPF[6:9]}-{EXISTING_CPF[9:]}"
     )
-    customer = sync_client.customers.find(cpf=cpf, store_id=STORE_ID)
+    customer = await async_client.customers.find(cpf=cpf, store_id=STORE_ID)
     assert isinstance(customer, CustomerResponse)
     assert customer.cpf == cpf
     print(f"  [OK] find_customer — id={customer.id}, cpf={customer.cpf}")
 
 
-def test_list_customers(sync_client: CredereClient) -> None:
-    customers = sync_client.customers.list(store_id=STORE_ID)
+async def test_list_customers(async_client: AsyncCredereClient) -> None:
+    customers = await async_client.customers.list(store_id=STORE_ID)
     assert isinstance(customers, list)
     print(f"  [OK] list_customers — {len(customers)} customer(s) returned")
 
 
-def test_domains(sync_client: CredereClient) -> None:
-    domains = sync_client.customers.domains()
+async def test_domains(async_client: AsyncCredereClient) -> None:
+    domains = await async_client.customers.domains()
     assert isinstance(domains, dict)
     print(f"  [OK] get_domains — {len(domains)} domain(s) returned")
     print(f"  Domains - {domains.keys()}")

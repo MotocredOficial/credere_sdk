@@ -7,19 +7,28 @@ from credere.exceptions import (
     CredereTimeoutError,
     NotFoundError,
 )
+from credere.models.bank_credentials import Bank, IntegratedBank
+from credere.models.customers import Domain
+from credere.models.leads import DomainValue
+from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
+from credere.models.proposals import ProposalAttempt, ProposalData, ProposalResponse
+from credere.models.simulations import Condition, RetrieveLead, SimulationData, SimulationResponse, Vehicle
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 from credere.models.stores import Store, StoreCreateRequest
 from credere.models.users import User, UserAccount, UserRole
 from credere.models.vehicle_models import (
+    Fuel,
+    VehicleBrand,
     VehicleModel,
     VehiclePrice,
+    VehicleType,
 )
 
 __all__ = [
-    "Address",
     "AsyncCredereClient",
     "AuthenticationError",
     "Bank",
+    "Condition",
     "CredereAPIError",
     "CredereClient",
     "CredereConnectionError",
@@ -27,19 +36,17 @@ __all__ = [
     "CredereTimeoutError",
     "Domain",
     "DomainValue",
+    "Fuel",
     "IntegratedBank",
     "NotFoundError",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
-    "ProposalCondition",
-    "ProposalConditionRequest",
-    "ProposalCreateRequest",
-    "ProposalCreateRequest",
-    "ProposalEnvelope",
+    "ProposalAttempt",
+    "ProposalData",
     "ProposalResponse",
-    "ProposalUpdateRequest",
-    "ProposalVehicle",
-    "ProposalVehicleRequest",
+    "RetrieveLead",
+    "SimulationData",
+    "SimulationResponse",
     "StockVehicle",
     "StockVehicleCreateRequest",
     "Store",
@@ -47,10 +54,9 @@ __all__ = [
     "User",
     "UserAccount",
     "UserRole",
+    "Vehicle",
     "VehicleBrand",
-    "VehicleFuel",
     "VehicleModel",
     "VehiclePrice",
-    "VehiclePriceStore",
     "VehicleType",
 ]
