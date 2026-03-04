@@ -18,12 +18,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+starlette = [
+    "starlette>=0.40",
+]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",
     "respx>=0.22",
     "ruff>=0.8",
     "mypy>=1.13",
+    "starlette>=0.40",
 ]
 
 [tool.hatch.build.targets.wheel]
