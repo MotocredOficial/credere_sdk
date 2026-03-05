@@ -2,88 +2,55 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
-class SimulationConditionRequest(BaseModel):
-    """Input condition for a simulation request."""
-
-    model_config = ConfigDict(extra="allow")
-
-    down_payment: int
-    financed_amount: int
-    installments: int
+class RetrieveLead(BaseModel):
+    cpf_cnpj: str
 
 
-class SimulationVehicleRequest(BaseModel):
-    """Input vehicle for a simulation request."""
+class ProductsOptions(BaseModel):
+    include_capitalization_bond: bool | None = None
+    include_asset_insurance: bool | None = None
 
-    model_config = ConfigDict(extra="allow")
 
-    asset_value: int
-    licensing_uf: str
-    manufacture_year: int
-    model_year: int
+class Vehicle(BaseModel):
     vehicle_molicar_code: str
-    zero_km: bool
+    licensing_uf: str | None = None
+    licensing_city: str | None = None
+    manufacture_year: int | None = None
+    model_year: int | None = None
+    asset_value: int | None = None
+    zero_km: bool | None = None
 
 
-class SimulationCreateRequest(BaseModel):
-    """Top-level input for creating a simulation."""
+class Condition(BaseModel):
+    installments: int
+    down_payment: int
+    bank_febraban_code: str | None = None
+    products_options: ProductsOptions | None = None
+    include_financial_protection_insurance: bool | None = None
+    process_credere_suggested_conditions: bool | None = None
+    max_return: int | None = None
+    min_return: int | None = None
+    return_preference: str | None = None
+    quota_preference: str | None = None
 
-    model_config = ConfigDict(extra="allow")
 
-    assets_value: int
-    documentation_value: int | None = None
-    conditions: list[SimulationConditionRequest]
-    retrieve_lead: dict[str, str]
+class SimulationData(BaseModel):
+    process_bank_suggested_conditions: bool = True
+    process_credere_suggested_conditions: bool = True
     seller_cpf: str
-    vehicle: SimulationVehicleRequest
+    retrieve_lead: RetrieveLead | None = None
+    bank_febraban_codes: list[str] | None = None
+    documentation_value: int | None = None
+    accessory_value: int | None = None
+    insurance_value: int | None = None
+    commercial: bool | None = None
+    vehicle: Vehicle | None = None
+    conditions: list[Condition] | None = None
 
 
-class Bank(BaseModel):
-    """Bank as returned in simulation condition responses."""
-
-    model_config = ConfigDict(extra="allow")
-
-    id: int | None = None
-    febraban_code: str | None = None
-    name: str | None = None
-    nickname: str | None = None
-
-
-class SimulationCondition(BaseModel):
-    """Condition as returned in simulation responses."""
-
-    model_config = ConfigDict(extra="allow")
-
-    id: int | None = None
-    installments: int | None = None
-    down_payment: int | None = None
-    financed_amount: int | None = None
-    created_at: str | None = None
-    bank: Bank | None = None
-    success: bool | None = None
-    error: str | None = None
-    interest_monthly: float | None = None
-    interest_annually: float | None = None
-    cet_monthly: float | None = None
-    cet_annually: float | None = None
-    first_installment_value: int | None = None
-    last_installment_value: int | None = None
-    amount_paid_in_financing: int | None = None
-    available: bool | None = None
-    credit_condition_code: str | None = None
-    credit_condition_description: str | None = None
-    process_task: dict | None = None
-    pre_approval_status: str | None = None
-    reason: str | None = None
-
-
-class Simulation(BaseModel):
-    """Simulation as returned by the API."""
-
-    model_config = ConfigDict(extra="allow")
-
-    assets_value: int | None = None
-    conditions: list[SimulationCondition] | None = None
+class SimulationResponse(BaseModel):
+    simulation_id: str
+    raw_response: dict

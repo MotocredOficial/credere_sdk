@@ -7,7 +7,7 @@ import httpx
 from credere._response import handle_request_error, raise_for_status
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
 
-_BASE_PATH = "/v1/plus_return_rules"
+_BASE_PATH = "/api/v1/plus_return_rules"
 
 
 class PlusReturns:

@@ -9,8 +9,8 @@ import httpx
 from credere._response import handle_request_error, raise_for_status
 from credere.models.vehicle_models import VehicleModel, VehiclePrice
 
-_MODELS_PATH = "/v1/vehicle_models"
-_PRICES_PATH = "/v1/vehicle_prices"
+_MODELS_PATH = "api/v1/vehicle_models"
+_PRICES_PATH = "api/v1/vehicle_prices"
 
 
 class VehicleModels:
@@ -30,12 +30,23 @@ class VehicleModels:
         self,
         *,
         store_id: int | None = None,
+        per_page: int | None = None,
+        molicar_code: str | None = None,
+        fipe_code: str | None = None,
         **params: Any,
     ) -> list[VehicleModel]:
+        query_params = {
+            **params,
+            "per_page": per_page,
+            "molicar_code": molicar_code,
+            "fipe_code": fipe_code,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
+
         try:
             response = self._client.get(
                 _MODELS_PATH,
-                params=params or None,
+                params=query_params or None,
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
@@ -54,11 +65,15 @@ class VehicleModels:
         store_id: int | None = None,
         **params: Any,
     ) -> VehicleModel:
-        params["q"] = q
+        query_params = {
+            **params,
+            "q": q,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
         try:
             response = self._client.get(
                 f"{_MODELS_PATH}/search",
-                params=params,
+                params=query_params,
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
@@ -106,8 +121,19 @@ class AsyncVehicleModels:
         self,
         *,
         store_id: int | None = None,
+        per_page: int | None = None,
+        molicar_code: str | None = None,
+        fipe_code: str | None = None,
         **params: Any,
     ) -> list[VehicleModel]:
+        query_params = {
+            **params,
+            "per_page": per_page,
+            "molicar_code": molicar_code,
+            "fipe_code": fipe_code,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
+
         try:
             response = await self._client.get(
                 _MODELS_PATH,
@@ -130,7 +156,11 @@ class AsyncVehicleModels:
         store_id: int | None = None,
         **params: Any,
     ) -> VehicleModel:
-        params["q"] = q
+        query_params = {
+            **params,
+            "q": q,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
         try:
             response = await self._client.get(
                 f"{_MODELS_PATH}/search",

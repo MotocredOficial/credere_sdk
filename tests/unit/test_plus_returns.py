@@ -8,8 +8,8 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, NotFoundError
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
 
-BASE_URL = "https://api.credere.com"
-RULES_URL = f"{BASE_URL}/v1/plus_return_rules"
+BASE_URL = "https://app.meucredere.com.br"
+RULES_URL = f"{BASE_URL}/api/v1/plus_return_rules"
 
 SAMPLE_RULE_RESPONSE = {
     "plus_return_rule": {

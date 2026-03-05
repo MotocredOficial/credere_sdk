@@ -1,5 +1,3 @@
-"""Credere SDK — Python client for the Credere credit simulation API."""
-
 from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import (
     AuthenticationError,
@@ -9,92 +7,52 @@ from credere.exceptions import (
     CredereTimeoutError,
     NotFoundError,
 )
-from credere.models.bank_credentials import IntegratedBank
-from credere.models.customers import (
-    Customer,
-    CustomerAddress,
-    CustomerAddressRequest,
-    CustomerCreateRequest,
-)
-from credere.models.leads import (
-    Address,
-    DomainValue,
-    Lead,
-    LeadAddress,
-    LeadCreateRequest,
-    LeadRequiredFields,
-)
+from credere.models.bank_credentials import Bank, IntegratedBank
+from credere.models.customers import Domain
+from credere.models.leads import DomainValue
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
-from credere.models.proposal_attempts import (
-    ProposalAttempt,
-    ProposalAttemptCreateRequest,
-)
-from credere.models.proposals import (
-    Proposal,
-    ProposalCondition,
-    ProposalConditionRequest,
-    ProposalCreateRequest,
-    ProposalVehicle,
-    ProposalVehicleRequest,
-)
+from credere.models.proposals import ProposalAttempt, ProposalData, ProposalResponse
 from credere.models.simulations import (
-    Bank,
-    Simulation,
-    SimulationCondition,
-    SimulationConditionRequest,
-    SimulationCreateRequest,
-    SimulationVehicleRequest,
+    Condition,
+    RetrieveLead,
+    SimulationData,
+    SimulationResponse,
+    Vehicle,
 )
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 from credere.models.stores import Store, StoreCreateRequest
 from credere.models.users import User, UserAccount, UserRole
-from credere.models.utilities import Domain
 from credere.models.vehicle_models import (
+    Fuel,
     VehicleBrand,
-    VehicleFuel,
     VehicleModel,
     VehiclePrice,
-    VehiclePriceStore,
     VehicleType,
 )
 
 __all__ = [
-    "Address",
     "AsyncCredereClient",
     "AuthenticationError",
     "Bank",
+    "Condition",
     "CredereAPIError",
     "CredereClient",
     "CredereConnectionError",
     "CredereError",
     "CredereTimeoutError",
-    "Customer",
-    "CustomerAddress",
-    "CustomerAddressRequest",
-    "CustomerCreateRequest",
     "Domain",
     "DomainValue",
+    "Fuel",
     "IntegratedBank",
-    "Lead",
-    "LeadAddress",
-    "LeadCreateRequest",
-    "LeadRequiredFields",
     "NotFoundError",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
-    "Proposal",
     "ProposalAttempt",
-    "ProposalAttemptCreateRequest",
-    "ProposalCondition",
-    "ProposalConditionRequest",
-    "ProposalCreateRequest",
-    "ProposalVehicle",
-    "ProposalVehicleRequest",
-    "Simulation",
-    "SimulationCondition",
-    "SimulationConditionRequest",
-    "SimulationCreateRequest",
-    "SimulationVehicleRequest",
+    "ProposalData",
+    "ProposalResponse",
+    "RetrieveLead",
+    "SimulationData",
+    "SimulationResponse",
     "StockVehicle",
     "StockVehicleCreateRequest",
     "Store",
@@ -102,10 +60,9 @@ __all__ = [
     "User",
     "UserAccount",
     "UserRole",
+    "Vehicle",
     "VehicleBrand",
-    "VehicleFuel",
     "VehicleModel",
     "VehiclePrice",
-    "VehiclePriceStore",
     "VehicleType",
 ]

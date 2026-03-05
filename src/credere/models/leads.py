@@ -12,21 +12,7 @@ class Address(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    zip_code: str | None = None
-    city: str | None = None
-    state: str | None = None
-    district: str | None = None
-    street: str | None = None
-    number: str | None = None
-    complement: str | None = None
-
-
-class LeadAddress(BaseModel):
-    """Address as returned in lead responses (includes id)."""
-
-    model_config = ConfigDict(extra="allow")
-
-    id: int | None = None
+    id: int | None = None  # Exists only in the response
     zip_code: str | None = None
     city: str | None = None
     state: str | None = None
@@ -47,7 +33,7 @@ class DomainValue(BaseModel):
     label: str | None = None
 
 
-class LeadCreateRequest(BaseModel):
+class LeadData(BaseModel):
     """Input model for creating or updating a lead."""
 
     model_config = ConfigDict(extra="allow")
@@ -65,7 +51,7 @@ class LeadCreateRequest(BaseModel):
     address: Address | None = None
 
 
-class Lead(BaseModel):
+class LeadResponse(BaseModel):
     """Lead as returned by the API."""
 
     model_config = ConfigDict(extra="allow")
@@ -81,7 +67,7 @@ class Lead(BaseModel):
     occupation: DomainValue | None = None
     profession: DomainValue | None = None
     mother_name: str | None = None
-    address: LeadAddress | None = None
+    address: Address | None = None
 
 
 class LeadRequiredFields(BaseModel):
@@ -89,5 +75,5 @@ class LeadRequiredFields(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    lead: Lead | None = None
+    lead: LeadResponse | None = None
     requirements: dict[str, Any] | None = None

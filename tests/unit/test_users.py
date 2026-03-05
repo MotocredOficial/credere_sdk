@@ -8,8 +8,8 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError
 from credere.models.users import User
 
-BASE_URL = "https://api.credere.com"
-USERS_URL = f"{BASE_URL}/v1/users"
+BASE_URL = "https://app.meucredere.com.br"
+USERS_URL = f"{BASE_URL}/api/v1/users"
 
 SAMPLE_USER = {
     "id": 1,

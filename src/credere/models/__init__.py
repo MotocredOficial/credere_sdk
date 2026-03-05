@@ -1,83 +1,96 @@
 """Pydantic models for the Credere SDK."""
 
-from credere.models.bank_credentials import IntegratedBank
+from credere.models.bank_credentials import Bank, IntegratedBank
 from credere.models.customers import (
-    Customer,
-    CustomerAddress,
-    CustomerAddressRequest,
-    CustomerCreateRequest,
+    Accountant,
+    BankReference,
+    BankValidations,
+    CustomerData,
+    CustomerResponse,
+    Domain,
+    Email,
+    JobReference,
+    PersonalReference,
+)
+from credere.models.customers import (
+    Address as CustomerAddress,
+)
+from credere.models.customers import (
+    Phone as CustomerPhone,
 )
 from credere.models.leads import (
-    Address,
+    Address as LeadAddress,
+)
+from credere.models.leads import (
     DomainValue,
-    Lead,
-    LeadAddress,
-    LeadCreateRequest,
+    LeadData,
     LeadRequiredFields,
+    LeadResponse,
 )
 from credere.models.plus_returns import PlusReturnRule, PlusReturnRuleCreateRequest
 from credere.models.proposal_attempts import (
-    ProposalAttempt,
-    ProposalAttemptCreateRequest,
+    ProposalAttemptData,
+    ProposalAttemptRequest,
+    ProposalAttemptResponse,
 )
 from credere.models.proposals import (
-    Proposal,
-    ProposalCondition,
-    ProposalConditionRequest,
-    ProposalCreateRequest,
-    ProposalVehicle,
-    ProposalVehicleRequest,
+    ProposalAttempt,
+    ProposalData,
+    ProposalResponse,
 )
 from credere.models.simulations import (
-    Bank,
-    Simulation,
-    SimulationCondition,
-    SimulationConditionRequest,
-    SimulationCreateRequest,
-    SimulationVehicleRequest,
+    Condition,
+    ProductsOptions,
+    RetrieveLead,
+    SimulationData,
+    SimulationResponse,
+    Vehicle,
 )
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 from credere.models.stores import Store, StoreCreateRequest
 from credere.models.users import User, UserAccount, UserRole
-from credere.models.utilities import Domain
 from credere.models.vehicle_models import (
+    Fuel,
     VehicleBrand,
-    VehicleFuel,
     VehicleModel,
+    VehicleModelSummary,
     VehiclePrice,
-    VehiclePriceStore,
     VehicleType,
 )
 
 __all__ = [
-    "Address",
+    "Accountant",
     "Bank",
-    "Customer",
+    "BankReference",
+    "BankValidations",
+    "Condition",
     "CustomerAddress",
-    "CustomerAddressRequest",
-    "CustomerCreateRequest",
+    "CustomerData",
+    "CustomerPhone",
+    "CustomerResponse",
     "Domain",
     "DomainValue",
+    "Email",
+    "Fuel",
     "IntegratedBank",
-    "Lead",
+    "JobReference",
     "LeadAddress",
-    "LeadCreateRequest",
+    "LeadData",
     "LeadRequiredFields",
+    "LeadResponse",
+    "PersonalReference",
     "PlusReturnRule",
     "PlusReturnRuleCreateRequest",
-    "Proposal",
+    "ProductsOptions",
     "ProposalAttempt",
-    "ProposalAttemptCreateRequest",
-    "ProposalCondition",
-    "ProposalConditionRequest",
-    "ProposalCreateRequest",
-    "ProposalVehicle",
-    "ProposalVehicleRequest",
-    "Simulation",
-    "SimulationCondition",
-    "SimulationConditionRequest",
-    "SimulationCreateRequest",
-    "SimulationVehicleRequest",
+    "ProposalAttemptData",
+    "ProposalAttemptRequest",
+    "ProposalAttemptResponse",
+    "ProposalData",
+    "ProposalResponse",
+    "RetrieveLead",
+    "SimulationData",
+    "SimulationResponse",
     "StockVehicle",
     "StockVehicleCreateRequest",
     "Store",
@@ -85,10 +98,10 @@ __all__ = [
     "User",
     "UserAccount",
     "UserRole",
+    "Vehicle",
     "VehicleBrand",
-    "VehicleFuel",
     "VehicleModel",
+    "VehicleModelSummary",
     "VehiclePrice",
-    "VehiclePriceStore",
     "VehicleType",
 ]

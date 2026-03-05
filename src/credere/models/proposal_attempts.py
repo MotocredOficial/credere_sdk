@@ -2,20 +2,20 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
-class ProposalAttemptCreateRequest(BaseModel):
-    """Input model for creating or updating a proposal attempt."""
+class ProposalAttemptRequest(BaseModel):
+    simulation_condition_id: int
+    external_simulation_uuid: str
 
-    model_config = ConfigDict(extra="allow")
+
+class ProposalAttemptData(BaseModel):
+    proposal_id: int
+    proposal_attempt: ProposalAttemptRequest
 
 
-class ProposalAttempt(BaseModel):
-    """Proposal attempt as returned by the API."""
-
-    model_config = ConfigDict(extra="allow")
-
-    id: int | None = None
-    created_at: str | None = None
-    updated_at: str | None = None
+class ProposalAttemptResponse(BaseModel):
+    object_type: str
+    id: int
+    raw_response: dict

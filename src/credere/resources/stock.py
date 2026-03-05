@@ -7,7 +7,7 @@ import httpx
 from credere._response import handle_request_error, raise_for_status
 from credere.models.stock import StockVehicle, StockVehicleCreateRequest
 
-_BASE_PATH = "/v1/vehicles"
+_BASE_PATH = "/api/v1/vehicles"
 
 
 class Stock:

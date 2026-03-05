@@ -5,7 +5,7 @@ import pytest
 from credere.client import AsyncCredereClient, CredereClient
 
 TEST_API_KEY = "sk-test-key"
-TEST_BASE_URL = "https://api.credere.com"
+TEST_BASE_URL = "https://app.meucredere.com.br"
 TEST_STORE_ID = 42
 
 

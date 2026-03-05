@@ -5,9 +5,12 @@ from __future__ import annotations
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.proposals import Proposal, ProposalCreateRequest
+from credere.models.proposals import (
+    ProposalData,
+    ProposalResponse,
+)
 
-_BASE_PATH = "/v1/proposals"
+_BASE_PATH = "api/v1/proposals"
 
 
 class Proposals:
@@ -25,10 +28,10 @@ class Proposals:
 
     def create(
         self,
-        data: ProposalCreateRequest,
+        data: ProposalData,
         *,
         store_id: int | None = None,
-    ) -> Proposal:
+    ) -> ProposalResponse:
         try:
             response = self._client.post(
                 _BASE_PATH,
@@ -39,9 +42,12 @@ class Proposals:
             handle_request_error(exc)
             raise  # unreachable, satisfies type checker
         raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
+        payload = response.json()["complete_proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
-    def list(self, *, store_id: int | None = None) -> list[Proposal]:
+    def list(self, *, store_id: int | None = None) -> list[ProposalResponse]:
         try:
             response = self._client.get(
                 _BASE_PATH,
@@ -51,14 +57,19 @@ class Proposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Proposal.model_validate(item) for item in response.json()["data"]]
+        return [
+            ProposalResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
+            for item in response.json()["proposals"]
+        ]
 
     def get(
         self,
         id: str,
         *,
         store_id: int | None = None,
-    ) -> Proposal:
+    ) -> ProposalResponse:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{id}",
@@ -68,26 +79,34 @@ class Proposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
+        payload = response.json()["proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def update(
         self,
         id: str,
-        data: ProposalCreateRequest,
+        data: ProposalData,
         *,
         store_id: int | None = None,
-    ) -> Proposal:
+    ) -> ProposalResponse:
         try:
             response = self._client.put(
                 f"{_BASE_PATH}/{id}",
-                json={"proposal": data.model_dump(exclude_none=True)},
+                json={
+                    "proposal": data.model_dump(exclude_none=True).update({"id": id})
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
+        payload = response.json()
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def delete(
         self,
@@ -105,46 +124,12 @@ class Proposals:
             raise
         raise_for_status(response)
 
-    def get_ownership(
-        self,
-        id: str,
-        *,
-        store_id: int | None = None,
-    ) -> Proposal:
-        try:
-            response = self._client.get(
-                f"{_BASE_PATH}/{id}/get_ownership",
-                headers=self._headers(store_id),
-            )
-        except httpx.HTTPError as exc:
-            handle_request_error(exc)
-            raise
-        raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
-
-    def leave_ownership(
-        self,
-        id: str,
-        *,
-        store_id: int | None = None,
-    ) -> Proposal:
-        try:
-            response = self._client.get(
-                f"{_BASE_PATH}/{id}/leave_ownership",
-                headers=self._headers(store_id),
-            )
-        except httpx.HTTPError as exc:
-            handle_request_error(exc)
-            raise
-        raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
-
     def activity_log(
         self,
         id: str,
         *,
         store_id: int | None = None,
-    ) -> list[dict]:
+    ) -> dict[str, list]:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{id}/activity_log",
@@ -154,7 +139,7 @@ class Proposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return response.json()["data"]
+        return response.json()
 
 
 class AsyncProposals:
@@ -172,10 +157,10 @@ class AsyncProposals:
 
     async def create(
         self,
-        data: ProposalCreateRequest,
+        data: ProposalData,
         *,
         store_id: int | None = None,
-    ) -> Proposal:
+    ) -> ProposalResponse:
         try:
             response = await self._client.post(
                 _BASE_PATH,
@@ -186,9 +171,12 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
+        payload = response.json()["complete_proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
-    async def list(self, *, store_id: int | None = None) -> list[Proposal]:
+    async def list(self, *, store_id: int | None = None) -> list[ProposalResponse]:
         try:
             response = await self._client.get(
                 _BASE_PATH,
@@ -198,14 +186,19 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Proposal.model_validate(item) for item in response.json()["data"]]
+        return [
+            ProposalResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
+            for item in response.json()["proposals"]
+        ]
 
     async def get(
         self,
         id: str,
         *,
         store_id: int | None = None,
-    ) -> Proposal:
+    ) -> ProposalResponse:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{id}",
@@ -215,26 +208,34 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
+        payload = response.json()["proposal"]
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def update(
         self,
         id: str,
-        data: ProposalCreateRequest,
+        data: ProposalData,
         *,
         store_id: int | None = None,
-    ) -> Proposal:
+    ) -> ProposalResponse:
         try:
             response = await self._client.put(
                 f"{_BASE_PATH}/{id}",
-                json={"proposal": data.model_dump(exclude_none=True)},
+                json={
+                    "proposal": data.model_dump(exclude_none=True).update({"id": id})
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
+        payload = response.json()
+        return ProposalResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def delete(
         self,
@@ -252,46 +253,12 @@ class AsyncProposals:
             raise
         raise_for_status(response)
 
-    async def get_ownership(
-        self,
-        id: str,
-        *,
-        store_id: int | None = None,
-    ) -> Proposal:
-        try:
-            response = await self._client.get(
-                f"{_BASE_PATH}/{id}/get_ownership",
-                headers=self._headers(store_id),
-            )
-        except httpx.HTTPError as exc:
-            handle_request_error(exc)
-            raise
-        raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
-
-    async def leave_ownership(
-        self,
-        id: str,
-        *,
-        store_id: int | None = None,
-    ) -> Proposal:
-        try:
-            response = await self._client.get(
-                f"{_BASE_PATH}/{id}/leave_ownership",
-                headers=self._headers(store_id),
-            )
-        except httpx.HTTPError as exc:
-            handle_request_error(exc)
-            raise
-        raise_for_status(response)
-        return Proposal.model_validate(response.json()["data"])
-
     async def activity_log(
         self,
         id: str,
         *,
         store_id: int | None = None,
-    ) -> list[dict]:
+    ) -> dict[str, list]:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{id}/activity_log",
@@ -301,4 +268,4 @@ class AsyncProposals:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return response.json()["data"]
+        return response.json()

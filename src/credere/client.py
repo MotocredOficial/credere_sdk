@@ -15,10 +15,9 @@ from credere.resources.simulations import AsyncSimulations, Simulations
 from credere.resources.stock import AsyncStock, Stock
 from credere.resources.stores import AsyncStores, Stores
 from credere.resources.users import AsyncUsers, Users
-from credere.resources.utilities import AsyncUtilities, Utilities
 from credere.resources.vehicle_models import AsyncVehicleModels, VehicleModels
 
-_DEFAULT_BASE_URL = "https://api.credere.com"
+_DEFAULT_BASE_URL = "https://app.meucredere.com.br"
 _DEFAULT_TIMEOUT = 30.0
 
 
@@ -46,7 +45,6 @@ class CredereClient:
         self.customers = Customers(self._http, store_id=store_id)
         self.plus_returns = PlusReturns(self._http, store_id=store_id)
         self.stock = Stock(self._http, store_id=store_id)
-        self.utilities = Utilities(self._http, store_id=store_id)
         self.vehicle_models = VehicleModels(self._http, store_id=store_id)
         self.proposal_attempts = ProposalAttempts(self._http, store_id=store_id)
         self.stores = Stores(self._http, store_id=store_id)
@@ -86,7 +84,6 @@ class AsyncCredereClient:
         self.customers = AsyncCustomers(self._http, store_id=store_id)
         self.plus_returns = AsyncPlusReturns(self._http, store_id=store_id)
         self.stock = AsyncStock(self._http, store_id=store_id)
-        self.utilities = AsyncUtilities(self._http, store_id=store_id)
         self.vehicle_models = AsyncVehicleModels(self._http, store_id=store_id)
         self.proposal_attempts = AsyncProposalAttempts(self._http, store_id=store_id)
         self.stores = AsyncStores(self._http, store_id=store_id)

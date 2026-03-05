@@ -6,13 +6,13 @@ import httpx
 
 from credere._response import handle_request_error, raise_for_status
 from credere.models.proposal_attempts import (
-    ProposalAttempt,
-    ProposalAttemptCreateRequest,
+    ProposalAttemptData,
+    ProposalAttemptResponse,
 )
 
 
 def _base_path(proposal_id: str) -> str:
-    return f"/v1/proposals/{proposal_id}/proposal_attempts"
+    return f"/api/v1/proposals/{proposal_id}/proposal_attempts"
 
 
 class ProposalAttempts:
@@ -31,10 +31,10 @@ class ProposalAttempts:
     def create(
         self,
         proposal_id: str,
-        data: ProposalAttemptCreateRequest,
+        data: ProposalAttemptData,
         *,
         store_id: int | None = None,
-    ) -> ProposalAttempt:
+    ) -> ProposalAttemptResponse:
         try:
             response = self._client.post(
                 _base_path(proposal_id),
@@ -45,14 +45,17 @@ class ProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def list(
         self,
         proposal_id: str,
         *,
         store_id: int | None = None,
-    ) -> list[ProposalAttempt]:
+    ) -> list[ProposalAttemptResponse]:
         try:
             response = self._client.get(
                 _base_path(proposal_id),
@@ -63,7 +66,10 @@ class ProposalAttempts:
             raise
         raise_for_status(response)
         return [
-            ProposalAttempt.model_validate(item) for item in response.json()["data"]
+            ProposalAttemptResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
+            for item in response.json()["proposal_attempts"]
         ]
 
     def get(
@@ -72,7 +78,7 @@ class ProposalAttempts:
         id: str,
         *,
         store_id: int | None = None,
-    ) -> ProposalAttempt:
+    ) -> ProposalAttemptResponse:
         try:
             response = self._client.get(
                 f"{_base_path(proposal_id)}/{id}",
@@ -82,46 +88,33 @@ class ProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     def update(
         self,
         proposal_id: str,
         id: str,
-        data: ProposalAttemptCreateRequest,
+        data: ProposalAttemptResponse,
         *,
         store_id: int | None = None,
-    ) -> ProposalAttempt:
+    ) -> ProposalAttemptResponse:
         try:
             response = self._client.put(
                 f"{_base_path(proposal_id)}/{id}",
-                json=data.model_dump(exclude_none=True),
+                json=data.model_dump(exclude_none=True, mode="json"),
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
-
-    def perform_action(
-        self,
-        proposal_id: str,
-        id: str,
-        action: str,
-        *,
-        store_id: int | None = None,
-    ) -> ProposalAttempt:
-        try:
-            response = self._client.get(
-                f"{_base_path(proposal_id)}/{id}/{action}",
-                headers=self._headers(store_id),
-            )
-        except httpx.HTTPError as exc:
-            handle_request_error(exc)
-            raise
-        raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
+        payload = response.json()
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
 
 class AsyncProposalAttempts:
@@ -140,10 +133,10 @@ class AsyncProposalAttempts:
     async def create(
         self,
         proposal_id: str,
-        data: ProposalAttemptCreateRequest,
+        data: ProposalAttemptData,
         *,
         store_id: int | None = None,
-    ) -> ProposalAttempt:
+    ) -> ProposalAttemptResponse:
         try:
             response = await self._client.post(
                 _base_path(proposal_id),
@@ -154,14 +147,17 @@ class AsyncProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def list(
         self,
         proposal_id: str,
         *,
         store_id: int | None = None,
-    ) -> list[ProposalAttempt]:
+    ) -> list[ProposalAttemptResponse]:
         try:
             response = await self._client.get(
                 _base_path(proposal_id),
@@ -172,7 +168,10 @@ class AsyncProposalAttempts:
             raise
         raise_for_status(response)
         return [
-            ProposalAttempt.model_validate(item) for item in response.json()["data"]
+            ProposalAttemptResponse(
+                object_type=item["object_type"], id=item["id"], raw_response=item
+            )
+            for item in response.json()["proposal_attempts"]
         ]
 
     async def get(
@@ -181,7 +180,7 @@ class AsyncProposalAttempts:
         id: str,
         *,
         store_id: int | None = None,
-    ) -> ProposalAttempt:
+    ) -> ProposalAttemptResponse:
         try:
             response = await self._client.get(
                 f"{_base_path(proposal_id)}/{id}",
@@ -191,43 +190,30 @@ class AsyncProposalAttempts:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
+        payload = response.json()["proposal_attempt"]
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )
 
     async def update(
         self,
         proposal_id: str,
         id: str,
-        data: ProposalAttemptCreateRequest,
+        data: ProposalAttemptResponse,
         *,
         store_id: int | None = None,
-    ) -> ProposalAttempt:
+    ) -> ProposalAttemptResponse:
         try:
             response = await self._client.put(
                 f"{_base_path(proposal_id)}/{id}",
-                json=data.model_dump(exclude_none=True),
+                json=data.model_dump(exclude_none=True, mode="json"),
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
-
-    async def perform_action(
-        self,
-        proposal_id: str,
-        id: str,
-        action: str,
-        *,
-        store_id: int | None = None,
-    ) -> ProposalAttempt:
-        try:
-            response = await self._client.get(
-                f"{_base_path(proposal_id)}/{id}/{action}",
-                headers=self._headers(store_id),
-            )
-        except httpx.HTTPError as exc:
-            handle_request_error(exc)
-            raise
-        raise_for_status(response)
-        return ProposalAttempt.model_validate(response.json()["data"])
+        payload = response.json()
+        return ProposalAttemptResponse(
+            object_type=payload["object_type"], id=payload["id"], raw_response=payload
+        )

@@ -8,7 +8,7 @@ from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError
 from credere.models.bank_credentials import IntegratedBank
 
-BASE_URL = "https://api.credere.com"
+BASE_URL = "https://app.meucredere.com.br"
 STORE_ID = 99
 
 SAMPLE_INTEGRATED_BANK = {
@@ -29,7 +29,7 @@ class TestBankCredentialsPersist:
     @respx.mock
     def test_persist(self, sync_client: CredereClient) -> None:
         route = respx.get(
-            f"{BASE_URL}/v1/stores/{STORE_ID}/persist_cnpj_bank_credentials"
+            f"{BASE_URL}/api/v1/stores/{STORE_ID}/persist_cnpj_bank_credentials"
         ).mock(return_value=httpx.Response(200, json={"status": "ok"}))
 
         result = sync_client.bank_credentials.persist(STORE_ID)
@@ -41,7 +41,7 @@ class TestBankCredentialsPersist:
 class TestBankCredentialsList:
     @respx.mock
     def test_list(self, sync_client: CredereClient) -> None:
-        route = respx.get(f"{BASE_URL}/v1/stores/{STORE_ID}/integrated_banks").mock(
+        route = respx.get(f"{BASE_URL}/api/v1/stores/{STORE_ID}/integrated_banks").mock(
             return_value=httpx.Response(
                 200,
                 json={"integrated_banks": [SAMPLE_INTEGRATED_BANK]},
@@ -64,7 +64,7 @@ class TestBankCredentialsList:
 class TestErrorMapping:
     @respx.mock
     def test_401_raises_authentication_error(self, sync_client: CredereClient) -> None:
-        respx.get(f"{BASE_URL}/v1/stores/{STORE_ID}/integrated_banks").mock(
+        respx.get(f"{BASE_URL}/api/v1/stores/{STORE_ID}/integrated_banks").mock(
             return_value=httpx.Response(
                 401,
                 json={"error": {"message": "Unauthorized", "status": 401}},
@@ -85,7 +85,7 @@ class TestErrorMapping:
 class TestAsyncBankCredentialsList:
     @respx.mock
     async def test_async_list(self, async_client: AsyncCredereClient) -> None:
-        route = respx.get(f"{BASE_URL}/v1/stores/{STORE_ID}/integrated_banks").mock(
+        route = respx.get(f"{BASE_URL}/api/v1/stores/{STORE_ID}/integrated_banks").mock(
             return_value=httpx.Response(
                 200,
                 json={"integrated_banks": [SAMPLE_INTEGRATED_BANK]},

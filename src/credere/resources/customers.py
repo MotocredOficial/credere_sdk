@@ -7,9 +7,9 @@ from enum import StrEnum
 import httpx
 
 from credere._response import handle_request_error, raise_for_status
-from credere.models.customers import Customer, CustomerCreateRequest
+from credere.models.customers import CustomerData, CustomerResponse, Domain
 
-_BASE_PATH = "/v1/customers"
+_BASE_PATH = "api/v1/customers"
 
 
 class SortOption(StrEnum):
@@ -34,40 +34,63 @@ class Customers:
 
     def create(
         self,
-        data: CustomerCreateRequest,
+        data: CustomerData,
+        bank_list: list[str],
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = self._client.post(
                 _BASE_PATH,
-                json={"customer": data.model_dump(exclude_none=True)},
+                json={
+                    "bank_validations": {"bank_codes": bank_list},
+                    "customer": data.model_dump(exclude_none=True),
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     def update(
         self,
         id: int,
-        data: CustomerCreateRequest,
+        data: CustomerData,
+        bank_list: list[str],
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = self._client.patch(
                 f"{_BASE_PATH}/{id}",
-                json={"customer": data.model_dump(exclude_none=True)},
+                json={
+                    "customer": data.model_dump(exclude_none=True),
+                    "bank_validations": {"bank_codes": bank_list},
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     def list(
         self,
@@ -78,18 +101,18 @@ class Customers:
         cpf_cnpj: int | None = None,
         name: str | None = None,
         sort: SortOption | None = None,
-    ) -> list[Customer]:
-        params = {
-            key: value
-            for key, value in {
-                "per_page": per_page,
-                "page": page,
-                "cpf_cnpj": cpf_cnpj,
-                "name": name,
-                "sort": sort,
-            }.items()
-            if value is not None
-        }
+    ) -> list[CustomerResponse]:
+        params = {}
+        if per_page is not None:
+            params["per_page"] = per_page
+        if page is not None:
+            params["page"] = page
+        if cpf_cnpj is not None:
+            params["cpf_cnpj"] = cpf_cnpj
+        if name is not None:
+            params["name"] = name
+        if sort is not None:
+            params["sort"] = sort
         try:
             response = self._client.get(
                 _BASE_PATH, headers=self._headers(store_id), params=params or None
@@ -98,14 +121,23 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Customer.model_validate(item) for item in response.json()["customers"]]
+        return [
+            CustomerResponse(
+                object_type=item["object_type"],
+                id=item["id"],
+                name=item["name"],
+                cpf=item["cpf"],
+                raw_response=item,
+            )
+            for item in response.json()["customers"]
+        ]
 
     def get(
         self,
         id: int,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = self._client.get(
                 f"{_BASE_PATH}/{id}",
@@ -115,7 +147,14 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
 
     def find(
         self,
@@ -124,7 +163,7 @@ class Customers:
         cpf_cnpj: str | None = None,
         cpf: str | None = None,
         cnpj: str | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         params = {}
         if cpf_cnpj:
             params["cpf_cnpj"] = cpf_cnpj
@@ -142,7 +181,36 @@ class Customers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
+
+    def domains(
+        self,
+        *,
+        types: list[str] | None = None,
+    ) -> dict[str, list[Domain]]:
+        params = {}
+        if types is not None:
+            params["types"] = ",".join(types)
+        try:
+            response = self._client.get(
+                _BASE_PATH.replace("customers", "domains"),
+                params=params or None,
+            )
+        except httpx.HTTPError as exc:
+            handle_request_error(exc)
+            raise
+        raise_for_status(response)
+        return {
+            key: [Domain.model_validate(item) for item in value]
+            for key, value in response.json()["domains"].items()
+        }
 
 
 class AsyncCustomers:
@@ -160,29 +228,40 @@ class AsyncCustomers:
 
     async def create(
         self,
-        data: CustomerCreateRequest,
+        data: CustomerData,
+        bank_list: list[str],
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = await self._client.post(
                 _BASE_PATH,
-                json={"customer": data.model_dump(exclude_none=True)},
+                json={
+                    "bank_validations": {"bank_codes": bank_list},
+                    "customer": data.model_dump(exclude_none=True),
+                },
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     async def update(
         self,
         id: int,
-        data: CustomerCreateRequest,
+        data: CustomerData,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = await self._client.patch(
                 f"{_BASE_PATH}/{id}",
@@ -193,7 +272,14 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            object_type=payload["object_type"],
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            raw_response=payload,
+        )
 
     async def list(
         self,
@@ -204,7 +290,7 @@ class AsyncCustomers:
         cpf_cnpj: int | None = None,
         name: str | None = None,
         sort: SortOption | None = None,
-    ) -> list[Customer]:
+    ) -> list[CustomerResponse]:
         params = {}
         if per_page is not None:
             params["per_page"] = per_page
@@ -224,14 +310,23 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return [Customer.model_validate(item) for item in response.json()["customers"]]
+        return [
+            CustomerResponse(
+                object_type=item["object_type"],
+                id=item["id"],
+                name=item["name"],
+                cpf=item["cpf"],
+                raw_response=item,
+            )
+            for item in response.json()["customers"]
+        ]
 
     async def get(
         self,
         id: int,
         *,
         store_id: int | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         try:
             response = await self._client.get(
                 f"{_BASE_PATH}/{id}",
@@ -241,7 +336,14 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
 
     async def find(
         self,
@@ -250,7 +352,7 @@ class AsyncCustomers:
         cpf_cnpj: str | None = None,
         cpf: str | None = None,
         cnpj: str | None = None,
-    ) -> Customer:
+    ) -> CustomerResponse:
         params = {}
         if cpf_cnpj:
             params["cpf_cnpj"] = cpf_cnpj
@@ -268,4 +370,33 @@ class AsyncCustomers:
             handle_request_error(exc)
             raise
         raise_for_status(response)
-        return Customer.model_validate(response.json()["customer"])
+        payload = response.json()["customer"]
+        return CustomerResponse(
+            id=payload["id"],
+            name=payload["name"],
+            cpf=payload["cpf"],
+            object_type=payload["object_type"],
+            raw_response=payload,
+        )
+
+    async def domains(
+        self,
+        *,
+        types: list[str] | None = None,
+    ) -> dict[str, list[Domain]]:
+        params = {}
+        if types is not None:
+            params["types"] = ",".join(types)
+        try:
+            response = await self._client.get(
+                _BASE_PATH.replace("customers", "domains"),
+                params=params or None,
+            )
+        except httpx.HTTPError as exc:
+            handle_request_error(exc)
+            raise
+        raise_for_status(response)
+        return {
+            key: [Domain.model_validate(item) for item in value]
+            for key, value in response.json()["domains"].items()
+        }
