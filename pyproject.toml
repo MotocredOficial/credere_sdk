@@ -22,9 +22,11 @@ dependencies = [
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
     "respx>=0.22",
     "ruff>=0.8",
     "mypy>=1.13",
+    "diff-cover>=9.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -55,3 +57,25 @@ python_version = "3.11"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
+
+[tool.coverage.run]
+source = ["credere"]
+branch = true
+omit = [
+    "src/credere/__init__.py",
+    "src/credere/models/__init__.py",
+    "src/credere/resources/__init__.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@overload",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
