@@ -137,7 +137,7 @@ class AsyncVehicleModels:
         try:
             response = await self._client.get(
                 _MODELS_PATH,
-                params=params or None,
+                params=query_params or None,
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
@@ -164,7 +164,7 @@ class AsyncVehicleModels:
         try:
             response = await self._client.get(
                 f"{_MODELS_PATH}/search",
-                params=params,
+                params=query_params or None,
                 headers=self._headers(store_id),
             )
         except httpx.HTTPError as exc:
