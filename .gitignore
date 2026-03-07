@@ -17,3 +17,5 @@ htmlcov/
 .coverage
 coverage.xml
 *.vim
+.githooks/
+.mailmap
