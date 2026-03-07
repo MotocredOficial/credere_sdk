@@ -174,3 +174,35 @@ class TestAsyncStoresList:
         assert len(result) == 1
         assert isinstance(result[0], Store)
         assert result[0].name == "Test Store"
+
+
+class TestAsyncStoresActivate:
+    @respx.mock
+    async def test_async_activate_store(self, async_client: AsyncCredereClient) -> None:
+        url = f"{STORES_URL}/1/activate"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_STORE_RESPONSE)
+        )
+
+        result = await async_client.stores.activate(1)
+
+        assert route.called
+        assert isinstance(result, Store)
+        assert result.name == "Test Store"
+
+
+class TestAsyncStoresDeactivate:
+    @respx.mock
+    async def test_async_deactivate_store(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        url = f"{STORES_URL}/1/deactivate"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_STORE_RESPONSE)
+        )
+
+        result = await async_client.stores.deactivate(1)
+
+        assert route.called
+        assert isinstance(result, Store)
+        assert result.name == "Test Store"

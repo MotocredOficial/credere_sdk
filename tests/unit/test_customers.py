@@ -923,6 +923,89 @@ class TestAsyncCustomersFind:
         assert exc.value.status_code == 404
 
 
+class TestCustomersDomains:
+    @respx.mock
+    def test_domains_without_filter(self, sync_client: CredereClient) -> None:
+        domains_url = f"{BASE_URL}/api/v1/domains"
+        route = respx.get(domains_url).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "domains": {
+                        "genders": [
+                            {"id": 1, "name": "Masculino", "identifier": "M"},
+                            {"id": 2, "name": "Feminino", "identifier": "F"},
+                        ],
+                        "marital_statuses": [
+                            {"id": 1, "name": "Casado"},
+                        ],
+                    }
+                },
+            )
+        )
+
+        result = sync_client.customers.domains()
+
+        assert route.called
+        assert "genders" in result
+        assert "marital_statuses" in result
+        assert len(result["genders"]) == 2
+        assert result["genders"][0].id == 1
+        assert result["genders"][0].name == "Masculino"
+        assert result["genders"][0].identifier == "M"
+        assert result["marital_statuses"][0].name == "Casado"
+
+    @respx.mock
+    def test_domains_with_types_filter(self, sync_client: CredereClient) -> None:
+        domains_url = f"{BASE_URL}/api/v1/domains"
+        route = respx.get(domains_url).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "domains": {
+                        "genders": [
+                            {"id": 1, "name": "Masculino"},
+                        ],
+                    }
+                },
+            )
+        )
+
+        result = sync_client.customers.domains(types=["genders", "marital_statuses"])
+
+        assert route.called
+        # Verify the types param was joined with comma
+        request = route.calls.last.request
+        assert "types=genders%2Cmarital_statuses" in str(request.url)
+        assert "genders" in result
+
+
+class TestAsyncCustomersDomains:
+    @pytest.mark.asyncio
+    @respx.mock
+    async def test_async_domains(self, async_client: AsyncCredereClient) -> None:
+        domains_url = f"{BASE_URL}/api/v1/domains"
+        route = respx.get(domains_url).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "domains": {
+                        "genders": [
+                            {"id": 1, "name": "Masculino", "identifier": "M"},
+                        ],
+                    }
+                },
+            )
+        )
+
+        result = await async_client.customers.domains()
+
+        assert route.called
+        assert "genders" in result
+        assert result["genders"][0].id == 1
+        assert result["genders"][0].name == "Masculino"
+
+
 class TestAsyncErrorMapping:
     @pytest.mark.asyncio
     @respx.mock

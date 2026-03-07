@@ -6,7 +6,7 @@ import respx
 
 from credere.client import AsyncCredereClient, CredereClient
 from credere.exceptions import AuthenticationError, CredereAPIError, NotFoundError
-from credere.models.leads import LeadData, LeadRequiredFields, LeadResponse
+from credere.models.leads import DomainValue, LeadData, LeadRequiredFields, LeadResponse
 
 BASE_URL = "https://app.meucredere.com.br"
 LEADS_URL = f"{BASE_URL}/api/v1/banks_api/leads"
@@ -304,6 +304,76 @@ class TestErrorMapping:
         assert exc_info.value.status_code == 500
 
 
+class TestLeadsDomains:
+    @respx.mock
+    def test_domains_without_filter(self, sync_client: CredereClient) -> None:
+        domains_url = f"{BASE_URL}/api/v1/banks_api/domains"
+        route = respx.get(domains_url).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "data": {
+                        "genders": [
+                            {
+                                "id": 1,
+                                "type": "gender",
+                                "credere_identifier": "M",
+                                "label": "Masculino",
+                            },
+                        ],
+                        "occupations": [
+                            {
+                                "id": 10,
+                                "type": "occupation",
+                                "credere_identifier": "11",
+                                "label": "Empregado",
+                            },
+                        ],
+                    }
+                },
+            )
+        )
+
+        result = sync_client.leads.domains()
+
+        assert route.called
+        assert "genders" in result
+        assert "occupations" in result
+        assert len(result["genders"]) == 1
+        assert isinstance(result["genders"][0], DomainValue)
+        assert result["genders"][0].credere_identifier == "M"
+        assert result["genders"][0].label == "Masculino"
+        assert result["occupations"][0].id == 10
+
+    @respx.mock
+    def test_domains_with_types_filter(self, sync_client: CredereClient) -> None:
+        domains_url = f"{BASE_URL}/api/v1/banks_api/domains"
+        route = respx.get(domains_url).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "data": {
+                        "genders": [
+                            {
+                                "id": 1,
+                                "type": "gender",
+                                "credere_identifier": "M",
+                                "label": "Masculino",
+                            },
+                        ],
+                    }
+                },
+            )
+        )
+
+        result = sync_client.leads.domains(types=["genders"])
+
+        assert route.called
+        request = route.calls.last.request
+        assert "types=genders" in str(request.url)
+        assert "genders" in result
+
+
 # ---------------------------------------------------------------------------
 # Async tests
 # ---------------------------------------------------------------------------
@@ -411,3 +481,33 @@ class TestAsyncLeadsRequiredFields:
         assert result.lead.id == 1
         assert result.requirements is not None
         assert "birthdate" in result.requirements
+
+
+class TestAsyncLeadsDomains:
+    @respx.mock
+    async def test_async_domains(self, async_client: AsyncCredereClient) -> None:
+        domains_url = f"{BASE_URL}/api/v1/banks_api/domains"
+        route = respx.get(domains_url).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "data": {
+                        "genders": [
+                            {
+                                "id": 1,
+                                "type": "gender",
+                                "credere_identifier": "M",
+                                "label": "Masculino",
+                            },
+                        ],
+                    }
+                },
+            )
+        )
+
+        result = await async_client.leads.domains()
+
+        assert route.called
+        assert "genders" in result
+        assert isinstance(result["genders"][0], DomainValue)
+        assert result["genders"][0].credere_identifier == "M"
