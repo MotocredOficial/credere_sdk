@@ -21,8 +21,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - run: pip install -e ".[dev]"
-      - run: python -m pytest tests/unit/ -v
+
+      - name: Run Unit Tests with Coverage
+        run: >-
+          python -m pytest tests/unit/ -v
+          --cov
+          --cov-branch
+          --cov-report=term-missing
+          --cov-report=xml:coverage.xml
+          --cov-report=html:htmlcov
+
+      - name: Enforce coverage on new code
+        if: github.event_name == 'pull_request'
+        run: >-
+          diff-cover coverage.xml
+          --compare-branch=origin/${{ github.base_ref }}
+          --fail-under=90
+          --diff-range-notation=..
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 14
