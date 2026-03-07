@@ -284,6 +284,27 @@ class TestProposalsDelete:
         assert result is None
 
 
+class TestProposalsActivityLog:
+    @respx.mock
+    def test_activity_log(self, sync_client: CredereClient) -> None:
+        proposal_id = "1"
+        url = f"{PROPOSALS_URL}/{proposal_id}/activity_log"
+        log_data = {
+            "activities": [
+                {"id": 1, "action": "created", "created_at": "2022-03-04"},
+                {"id": 2, "action": "updated", "created_at": "2022-03-05"},
+            ]
+        }
+        route = respx.get(url).mock(return_value=httpx.Response(200, json=log_data))
+
+        result = sync_client.proposals.activity_log(proposal_id)
+
+        assert route.called
+        assert result == log_data
+        assert len(result["activities"]) == 2
+        assert result["activities"][0]["action"] == "created"
+
+
 class TestProposalsErrorMapping:
     @respx.mock
     def test_401_raises_authentication_error(self, sync_client: CredereClient) -> None:
@@ -424,3 +445,23 @@ class TestAsyncProposalsDelete:
 
         assert route.called
         assert result is None
+
+
+class TestAsyncProposalsActivityLog:
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_async_activity_log(self, async_client: AsyncCredereClient) -> None:
+        proposal_id = "1"
+        url = f"{PROPOSALS_URL}/{proposal_id}/activity_log"
+        log_data = {
+            "activities": [
+                {"id": 1, "action": "created", "created_at": "2022-03-04"},
+            ]
+        }
+        route = respx.get(url).mock(return_value=httpx.Response(200, json=log_data))
+
+        result = await async_client.proposals.activity_log(proposal_id)
+
+        assert route.called
+        assert result == log_data
+        assert result["activities"][0]["action"] == "created"
