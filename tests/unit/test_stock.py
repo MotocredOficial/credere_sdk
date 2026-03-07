@@ -164,6 +164,41 @@ class TestAsyncStockCreate:
         assert vehicle.description == "Test vehicle"
 
 
+class TestAsyncStockUpdate:
+    @respx.mock
+    async def test_async_update_returns_stock_vehicle(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        url = f"{VEHICLES_URL}/1"
+        route = respx.put(url).mock(
+            return_value=httpx.Response(200, json={"vehicle": SAMPLE_VEHICLE})
+        )
+
+        vehicle = await async_client.stock.update(1, SAMPLE_CREATE_DATA)
+
+        assert route.called
+        assert isinstance(vehicle, StockVehicle)
+        assert vehicle.id == 1
+        assert vehicle.price_cents == 5000000
+
+
+class TestAsyncStockRemove:
+    @respx.mock
+    async def test_async_remove_returns_stock_vehicle(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        url = f"{VEHICLES_URL}/1/remove_from_stock"
+        route = respx.put(url).mock(
+            return_value=httpx.Response(200, json={"vehicle": SAMPLE_VEHICLE})
+        )
+
+        vehicle = await async_client.stock.remove(1)
+
+        assert route.called
+        assert isinstance(vehicle, StockVehicle)
+        assert vehicle.id == 1
+
+
 class TestAsyncStockList:
     @respx.mock
     async def test_async_list_returns_stock_vehicles(

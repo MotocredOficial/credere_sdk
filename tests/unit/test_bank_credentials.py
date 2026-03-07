@@ -82,6 +82,19 @@ class TestErrorMapping:
 # ---------------------------------------------------------------------------
 
 
+class TestAsyncBankCredentialsPersist:
+    @respx.mock
+    async def test_async_persist(self, async_client: AsyncCredereClient) -> None:
+        route = respx.get(
+            f"{BASE_URL}/api/v1/stores/{STORE_ID}/persist_cnpj_bank_credentials"
+        ).mock(return_value=httpx.Response(200, json={"status": "ok"}))
+
+        result = await async_client.bank_credentials.persist(STORE_ID)
+
+        assert route.called
+        assert result == {"status": "ok"}
+
+
 class TestAsyncBankCredentialsList:
     @respx.mock
     async def test_async_list(self, async_client: AsyncCredereClient) -> None:

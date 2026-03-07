@@ -226,6 +226,21 @@ class TestAsyncPlusReturnsGet:
         assert result.id == 1
 
 
+class TestAsyncPlusReturnsUpdate:
+    @respx.mock
+    async def test_async_update(self, async_client: AsyncCredereClient) -> None:
+        url = f"{RULES_URL}/1"
+        route = respx.patch(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_RULE_RESPONSE)
+        )
+
+        result = await async_client.plus_returns.update(1, SAMPLE_CREATE_DATA)
+
+        assert route.called
+        assert isinstance(result, PlusReturnRule)
+        assert result.id == 1
+
+
 class TestAsyncPlusReturnsDelete:
     @respx.mock
     async def test_async_delete(self, async_client: AsyncCredereClient) -> None:
@@ -237,3 +252,33 @@ class TestAsyncPlusReturnsDelete:
 
         assert route.called
         assert result is None
+
+
+class TestAsyncPlusReturnsActivate:
+    @respx.mock
+    async def test_async_activate(self, async_client: AsyncCredereClient) -> None:
+        url = f"{RULES_URL}/1/activate"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_RULE_RESPONSE)
+        )
+
+        result = await async_client.plus_returns.activate(1)
+
+        assert route.called
+        assert isinstance(result, PlusReturnRule)
+        assert result.id == 1
+
+
+class TestAsyncPlusReturnsDeactivate:
+    @respx.mock
+    async def test_async_deactivate(self, async_client: AsyncCredereClient) -> None:
+        url = f"{RULES_URL}/1/deactivate"
+        route = respx.get(url).mock(
+            return_value=httpx.Response(200, json=SAMPLE_RULE_RESPONSE)
+        )
+
+        result = await async_client.plus_returns.deactivate(1)
+
+        assert route.called
+        assert isinstance(result, PlusReturnRule)
+        assert result.id == 1
