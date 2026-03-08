@@ -28,7 +28,10 @@ def test_list_vehicle_models_per_page(sync_client: CredereClient) -> None:
     assert isinstance(models, list)
     assert len(models) <= per_page
     assert all(isinstance(m, VehicleModel) for m in models)
-    print(f"  [OK] list_vehicle_models (per_page={per_page}) — {len(models)} model(s) returned")
+    print(
+        f"  [OK] list_vehicle_models (per_page={per_page})"
+        f" — {len(models)} model(s) returned"
+    )
 
 
 def test_list_vehicle_models_with_molicar_code(sync_client: CredereClient) -> None:
@@ -38,7 +41,8 @@ def test_list_vehicle_models_with_molicar_code(sync_client: CredereClient) -> No
     assert isinstance(models, list)
     assert all(model.molicar_code == MOLICAR_CODE for model in models)
     print(
-        f"  [OK] list_vehicle_models (molicar_code={MOLICAR_CODE}) — {len(models)} model(s) returned"
+        f"  [OK] list_vehicle_models (molicar_code={MOLICAR_CODE})"
+        f" — {len(models)} model(s) returned"
     )
 
 
@@ -62,5 +66,6 @@ def test_list_vehicle_prices_with_store(sync_client: CredereClient) -> None:
     for price in prices:
         assert isinstance(price, VehiclePrice)
     print(
-        f"  [OK] list_vehicle_prices (store_id={STORE_ID}) — {len(prices)} price(s) returned"
+        f"  [OK] list_vehicle_prices (store_id={STORE_ID})"
+        f" — {len(prices)} price(s) returned"
     )

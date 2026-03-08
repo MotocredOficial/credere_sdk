@@ -118,7 +118,9 @@ class TestVehicleModelsList:
         assert sent_params.get("per_page") == "5"
 
     @respx.mock
-    def test_list_sends_molicar_code_query_param(self, sync_client: CredereClient) -> None:
+    def test_list_sends_molicar_code_query_param(
+        self, sync_client: CredereClient
+    ) -> None:
         route = respx.get(MODELS_URL).mock(
             return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
         )

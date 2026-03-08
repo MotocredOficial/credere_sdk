@@ -22,11 +22,16 @@ async def test_list_vehicle_models(async_client: AsyncCredereClient) -> None:
 
 async def test_list_vehicle_models_per_page(async_client: AsyncCredereClient) -> None:
     per_page = 3
-    models = await async_client.vehicle_models.list(store_id=STORE_ID, per_page=per_page)
+    models = await async_client.vehicle_models.list(
+        store_id=STORE_ID, per_page=per_page
+    )
     assert isinstance(models, list)
     assert len(models) <= per_page
     assert all(isinstance(m, VehicleModel) for m in models)
-    print(f"  [OK] list_vehicle_models (per_page={per_page}) — {len(models)} model(s) returned")
+    print(
+        f"  [OK] list_vehicle_models (per_page={per_page})"
+        f" — {len(models)} model(s) returned"
+    )
 
 
 async def test_list_vehicle_models_with_molicar_code(
@@ -39,7 +44,8 @@ async def test_list_vehicle_models_with_molicar_code(
     assert all(isinstance(m, VehicleModel) for m in models)
     assert all(model.molicar_code == MOLICAR_CODE for model in models)
     print(
-        f"  [OK] list_vehicle_models (molicar_code={MOLICAR_CODE}) — {len(models)} model(s) returned"
+        f"  [OK] list_vehicle_models (molicar_code={MOLICAR_CODE})"
+        f" — {len(models)} model(s) returned"
     )
 
 
@@ -63,5 +69,6 @@ async def test_list_vehicle_prices_with_store(async_client: AsyncCredereClient) 
     for price in prices:
         assert isinstance(price, VehiclePrice)
     print(
-        f"  [OK] list_vehicle_prices (store_id={STORE_ID}) — {len(prices)} price(s) returned"
+        f"  [OK] list_vehicle_prices (store_id={STORE_ID})"
+        f" — {len(prices)} price(s) returned"
     )
