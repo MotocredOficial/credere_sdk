@@ -105,6 +105,56 @@ class TestVehicleModelsList:
         assert result[0].molicar_code == "00000000-0"
         assert result[0].active is True
 
+    @respx.mock
+    def test_list_sends_per_page_query_param(self, sync_client: CredereClient) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        sync_client.vehicle_models.list(per_page=5)
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("per_page") == "5"
+
+    @respx.mock
+    def test_list_sends_molicar_code_query_param(self, sync_client: CredereClient) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        sync_client.vehicle_models.list(molicar_code="00000000-0")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("molicar_code") == "00000000-0"
+
+    @respx.mock
+    def test_list_sends_fipe_code_query_param(self, sync_client: CredereClient) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        sync_client.vehicle_models.list(fipe_code="811138-3")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("fipe_code") == "811138-3"
+
+    @respx.mock
+    def test_list_omits_none_query_params(self, sync_client: CredereClient) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        sync_client.vehicle_models.list()
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert "per_page" not in sent_params
+        assert "molicar_code" not in sent_params
+        assert "fipe_code" not in sent_params
+
 
 class TestVehicleModelsSearch:
     @respx.mock
@@ -121,6 +171,31 @@ class TestVehicleModelsSearch:
         assert result.brand == "HONDA"
         assert result.molicar_code == "00000000-0"
         assert result.active is True
+
+    @respx.mock
+    def test_search_sends_q_query_param(self, sync_client: CredereClient) -> None:
+        route = respx.get(f"{MODELS_URL}/search").mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_MODEL)
+        )
+
+        sync_client.vehicle_models.search("Honda CG")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("q") == "Honda CG"
+
+    @respx.mock
+    def test_search_sends_extra_params(self, sync_client: CredereClient) -> None:
+        route = respx.get(f"{MODELS_URL}/search").mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_MODEL)
+        )
+
+        sync_client.vehicle_models.search("BIZ", custom_filter="active")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("q") == "BIZ"
+        assert sent_params.get("custom_filter") == "active"
 
 
 class TestVehicleModelsPrices:
@@ -186,6 +261,64 @@ class TestAsyncVehicleModelsList:
         assert isinstance(result[0], VehicleModel)
         assert result[0].id == 1
 
+    @respx.mock
+    async def test_async_list_sends_per_page_query_param(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        await async_client.vehicle_models.list(per_page=5)
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("per_page") == "5"
+
+    @respx.mock
+    async def test_async_list_sends_molicar_code_query_param(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        await async_client.vehicle_models.list(molicar_code="00000000-0")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("molicar_code") == "00000000-0"
+
+    @respx.mock
+    async def test_async_list_sends_fipe_code_query_param(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        await async_client.vehicle_models.list(fipe_code="811138-3")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("fipe_code") == "811138-3"
+
+    @respx.mock
+    async def test_async_list_omits_none_query_params(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(MODELS_URL).mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLES_LIST_RESPONSE)
+        )
+
+        await async_client.vehicle_models.list()
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert "per_page" not in sent_params
+        assert "molicar_code" not in sent_params
+        assert "fipe_code" not in sent_params
+
 
 class TestAsyncVehicleModelsSearch:
     @respx.mock
@@ -202,3 +335,32 @@ class TestAsyncVehicleModelsSearch:
         assert isinstance(result, VehicleModel)
         assert result.id == 1
         assert result.brand == "HONDA"
+
+    @respx.mock
+    async def test_async_search_sends_q_query_param(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(f"{MODELS_URL}/search").mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_MODEL)
+        )
+
+        await async_client.vehicle_models.search("Honda CG")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("q") == "Honda CG"
+
+    @respx.mock
+    async def test_async_search_sends_extra_params(
+        self, async_client: AsyncCredereClient
+    ) -> None:
+        route = respx.get(f"{MODELS_URL}/search").mock(
+            return_value=httpx.Response(200, json=SAMPLE_VEHICLE_MODEL)
+        )
+
+        await async_client.vehicle_models.search("BIZ", custom_filter="active")
+
+        assert route.called
+        sent_params = dict(route.calls[0].request.url.params)
+        assert sent_params.get("q") == "BIZ"
+        assert sent_params.get("custom_filter") == "active"

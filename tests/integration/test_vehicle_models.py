@@ -17,16 +17,18 @@ MOLICAR_CODE = "01907514-5"
 def test_list_vehicle_models(sync_client: CredereClient) -> None:
     models = sync_client.vehicle_models.list(store_id=STORE_ID)
     assert isinstance(models, list)
-    assert isinstance(models[0], VehicleModel)
+    assert models, "Expected at least one vehicle model in the list"
+    assert all(isinstance(m, VehicleModel) for m in models)
     print(f"  [OK] list_vehicle_models — {len(models)} model(s) returned")
 
 
-def test_list_9999_vehicles_models(sync_client: CredereClient) -> None:
-    models = sync_client.vehicle_models.list(store_id=STORE_ID, per_page=9999)
+def test_list_vehicle_models_per_page(sync_client: CredereClient) -> None:
+    per_page = 3
+    models = sync_client.vehicle_models.list(store_id=STORE_ID, per_page=per_page)
     assert isinstance(models, list)
-    assert len(models) <= 9999
-    assert any(model.brand.lower() == "avelloz" for model in models)
-    print(f"  [OK] list_vehicle_models (limit=9999) — {len(models)} model(s) returned")
+    assert len(models) <= per_page
+    assert all(isinstance(m, VehicleModel) for m in models)
+    print(f"  [OK] list_vehicle_models (per_page={per_page}) — {len(models)} model(s) returned")
 
 
 def test_list_vehicle_models_with_molicar_code(sync_client: CredereClient) -> None:
@@ -34,6 +36,7 @@ def test_list_vehicle_models_with_molicar_code(sync_client: CredereClient) -> No
         molicar_code=MOLICAR_CODE, store_id=STORE_ID
     )
     assert isinstance(models, list)
+    assert all(model.molicar_code == MOLICAR_CODE for model in models)
     print(
         f"  [OK] list_vehicle_models (molicar_code={MOLICAR_CODE}) — {len(models)} model(s) returned"
     )

@@ -15,15 +15,18 @@ pytestmark = pytest.mark.asyncio
 async def test_list_vehicle_models(async_client: AsyncCredereClient) -> None:
     models = await async_client.vehicle_models.list(store_id=STORE_ID)
     assert isinstance(models, list)
+    assert models, "Expected at least one vehicle model in the list"
+    assert all(isinstance(m, VehicleModel) for m in models)
     print(f"  [OK] list_vehicle_models — {len(models)} model(s) returned")
 
 
-async def test_list_9999_vehicles_models(async_client: AsyncCredereClient) -> None:
-    models = await async_client.vehicle_models.list(store_id=STORE_ID, per_page=9999)
+async def test_list_vehicle_models_per_page(async_client: AsyncCredereClient) -> None:
+    per_page = 3
+    models = await async_client.vehicle_models.list(store_id=STORE_ID, per_page=per_page)
     assert isinstance(models, list)
-    assert len(models) <= 9999
-    assert any(model.brand.lower() == "avelloz" for model in models)
-    print(f"  [OK] list_vehicle_models (limit=9999) — {len(models)} model(s) returned")
+    assert len(models) <= per_page
+    assert all(isinstance(m, VehicleModel) for m in models)
+    print(f"  [OK] list_vehicle_models (per_page={per_page}) — {len(models)} model(s) returned")
 
 
 async def test_list_vehicle_models_with_molicar_code(
@@ -33,6 +36,8 @@ async def test_list_vehicle_models_with_molicar_code(
         molicar_code=MOLICAR_CODE, store_id=STORE_ID
     )
     assert isinstance(models, list)
+    assert all(isinstance(m, VehicleModel) for m in models)
+    assert all(model.molicar_code == MOLICAR_CODE for model in models)
     print(
         f"  [OK] list_vehicle_models (molicar_code={MOLICAR_CODE}) — {len(models)} model(s) returned"
     )
