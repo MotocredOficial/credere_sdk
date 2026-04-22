@@ -12,6 +12,7 @@ class RetrieveLead(BaseModel):
 class ProductsOptions(BaseModel):
     include_capitalization_bond: bool | None = None
     include_asset_insurance: bool | None = None
+    include_personal_insurance: bool | None = None
 
 
 class Vehicle(BaseModel):
